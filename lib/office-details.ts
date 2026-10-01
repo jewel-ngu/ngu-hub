@@ -1,0 +1,17 @@
+export const officeDetails = [
+  ["Brisbane", "07 3103 0723", "Level 1/189 Coronation Drive, Milton", "brisbane", "17"],
+  ["Booval", "07 2800 8704", "Shop Lot 1/2 Ground Floor, Booval Fair Shopping Centre, 139 Brisbane Road, Booval", "booval", "23"],
+  ["Brassall", "07 3813 0077", "Shop 37, 68 Hunter Street, Brassall", "brassall", "06"],
+  ["Brisbane West", "0487 169 912", "Shop 3/152 Woogaroo Street, Forest Lake", "brisbane-west", "10"],
+  ["Bundaberg", "07 3186 8823", "127 Bargara Road, Bundaberg East", "bundaberg", "24"],
+  ["Greater Springfield", "07 3814 7227", "3/24 Commercial Drive, Springfield", "greater-springfield", "19"],
+  ["Ipswich Central", "07 4333 7030", "Suite C/45 East Street, Ipswich", "ipswich-central", "21"],
+  ["Karalee", "07 3813 0099", "5 Habitat Place, Karalee", "karalee", "07"],
+  ["Lifestyle", "07 5359 5808", "Shop 7/18 John Street, Rosewood", "lifestyle", "09"],
+  ["Logan", "07 3462 2870", "497 Kingston Road, Kingston", "logan", "08"],
+  ["Ripley", "07 3288 6999", "442 Ripley Road, Ripley", "ripley", "02"],
+  ["South East", "07 3555 8013", "6/1027 Manly Road, Tingalpa", "southeast", "12"],
+  ["Springwood", "07 3290 0300", "Unit 3/41 Watland Street, Springwood", "springwood", "11"],
+  ["The Jason Yang Group", "07 3186 8863", "Level 1/189 Coronation Drive, Milton", "the-jason-yang-group", "22"],
+  ["Toowoomba", "07 4659 9179", "3/13 Kitchener Street, East Toowoomba", "toowoomba", "14"],
+] as const;
