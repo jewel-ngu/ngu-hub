@@ -105,6 +105,8 @@ export function SiteShell({ children }: SiteShellProps): ReactNode {
     <div className="drawer-contacts">
       <div><h3>Sales Admin</h3><p>REA, Domain, Realworks, Form 6</p><a href="mailto:admin@ngurealestate.com.au">admin@ngurealestate.com.au</a></div>
       <div><h3>Design &amp; Branding</h3><p>RealHub, design requests, branding enquiries</p><a href="mailto:design@ngurealestate.com.au">design@ngurealestate.com.au</a></div>
+      <div><h3>Accounts</h3><p>Payments, invoices and accounts enquiries</p><a href="mailto:accounts@ngurealestate.com.au">accounts@ngurealestate.com.au</a></div>
+      <div><h3>AML/CTF</h3><p>Compliance guidance and First AML support</p><a href="mailto:amlctf@ngurealestate.com.au">amlctf@ngurealestate.com.au</a></div>
     </div>
   );
 

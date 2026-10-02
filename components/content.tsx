@@ -2,10 +2,13 @@ import { ArrowRight, CalendarDays, ExternalLink, FileText, Mail, PlayCircle, Shi
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
-import { appGroups, people, rexTraining, salesTraining, type SimplePage } from "@/lib/site-data";
+import { StageChecklist } from "@/components/stage-checklist";
+import { TrainingPlaylist } from "@/components/training-playlist";
+import { appGroups, people, type SimplePage } from "@/lib/site-data";
 import { supportContacts } from "@/lib/support-contacts";
 import { officeDetails } from "@/lib/office-details";
 import { LiveDirectory } from "@/components/live-directory";
+import { rexTrainingVideos, salesTrainingVideos } from "@/lib/training-data";
 
 export function SectionHeading({ children }: { readonly children: ReactNode }): ReactNode {
   return <h2 className="section-heading">{children}</h2>;
@@ -133,9 +136,12 @@ export function InfoHub(): ReactNode {
       <section className="hub-feature-section">
         <p className="eyebrow">EXPLORE THE HUB</p>
         <div className="hub-image-grid">
-          <ImageLinkCard title="Agent Toolkit" description="Essential marketing guides, templates, and resources." href="/info-hub/agent-toolkit" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/-.png" />
+          <ImageLinkCard title="Pre-List" description="Prepare for a strong appraisal and listing." href="/info-hub/agent-toolkit/pre-list" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/-.png" />
+          <ImageLinkCard title="Pre-Sale" description="Set up every campaign for success." href="/info-hub/agent-toolkit/pre-sale" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/socialmedia.png" />
+          <ImageLinkCard title="Open Home" description="Present, capture and follow up." href="/info-hub/agent-toolkit/open-home" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/blogpost.png" />
           <ImageLinkCard title="Welcome Pack" description="Everything you need for your first weeks at NGU." href="/info-hub/welcome-pack" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/DSC01401.jpg" />
           <ImageLinkCard title="Sales Training" description="Training resources for agents and sales teams." href="/info-hub/sales-training" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/DSC00291.jpg" />
+          <ImageLinkCard title="Rex Training" description="Recorded webinars to help you get more from Rex." href="/info-hub/rex-training" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/DSC01401.jpg" />
         </div>
       </section>
 
@@ -271,18 +277,6 @@ export function AmlCtf(): ReactNode {
   );
 }
 
-export function AgentToolkit(): ReactNode {
-  return (
-    <section className="content-section">
-      <div className="feature-grid three">
-        <LinkCard title="Pre-List Resources" description="Prepare for a strong appraisal and listing." href="/info-hub/agent-toolkit/pre-list" />
-        <LinkCard title="Pre-Sale Resources" description="Set up every campaign for success." href="/info-hub/agent-toolkit/pre-sale" />
-        <LinkCard title="Open Home Resources" description="Present, capture and follow up." href="/info-hub/agent-toolkit/open-home" />
-      </div>
-    </section>
-  );
-}
-
 export function OurPeople(): ReactNode {
   const prestigeRoles = ["Chairman of NGU Real Estate", "Principal · NGU Ipswich", "Principal · NGU Ripley & Surrounds", "Principals · NGU Ipswich Karalee", "Co-Principal · NGU Toowoomba", "Principal · NGU South East", "Principal · NGU Logan", "Principal · NGU Lifestyle", "Principal · NGU Ipswich Central", "Principal · NGU Booval", "Principal · NGU Brisbane West", "Principal · The Jason Yang Group", "Principal · NGU Bundaberg", "Agent · NGU Brisbane", "Agent · NGU Springfield"] as const;
   const eliteRoles = ["Principal · NGU Toowoomba", "Agent · NGU Karalee", "Agent · NGU Karalee", "Agent · NGU Ripley & Surrounds", "Agent · NGU Ripley & Surrounds", "Agent · NGU Booval", "Sales & Marketing Specialist · NGU Logan", "Agent · NGU Ripley & Surrounds"] as const;
@@ -337,24 +331,104 @@ export function RealEstateCpd(): ReactNode {
   );
 }
 
-export function TrainingList({ type }: { readonly type: "sales" | "rex" }): ReactNode {
-  const entries = type === "sales" ? salesTraining : rexTraining;
+type ToolkitStageName = "pre-list" | "pre-sale" | "open-home";
+
+type ToolkitStageData = {
+  readonly title: string;
+  readonly checklist: readonly string[];
+  readonly apps: readonly { readonly name: string; readonly description: string; readonly href: string }[];
+  readonly resources: readonly { readonly title: string; readonly description: string; readonly href: string }[];
+};
+
+const toolkitStages = {
+  "pre-list": {
+    title: "Pre-List",
+    checklist: ["Contract", "CMAs", "Pre-List Booklet", "Trades List", "Realty Assist Brochure", "Client Service List", "Business Cards / Pen"],
+    apps: [
+      { name: "Basecamp", description: "Creative requests and team tasks", href: "https://launchpad.37signals.com/signin" },
+      { name: "RealHub", description: "NGU marketing templates", href: "https://realhub-frontend.realbase.io/" },
+      { name: "Rex Pipeline", description: "Manage and progress appraisals", href: "https://app.rexsoftware.com/appraisals" },
+      { name: "Realty Assist", description: "Vendor-paid marketing", href: "https://realtyassist.com.au/" },
+      { name: "Cognito Forms", description: "Create e-appraisal forms", href: "https://www.cognitoforms.com/" },
+    ],
+    resources: [
+      { title: "Business Cards", description: "Sample NGU business-card artwork", href: "https://drive.google.com/file/d/1Ya3wtaE4D7impeR_2e24Pai9XGg4nssk/view" },
+      { title: "Marketing Materials 2025–2026", description: "Browse the complete current marketing range", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" },
+    ],
+  },
+  "pre-sale": {
+    title: "Pre-Sale",
+    checklist: ["Photographers & Videographers", "Signboard & Brochures", "Flyers", "Social Media Post", "Stylists"],
+    apps: [
+      { name: "Basecamp", description: "Creative requests and team tasks", href: "https://launchpad.37signals.com/signin" },
+      { name: "RealHub", description: "NGU campaign marketing templates", href: "https://realhub-frontend.realbase.io/" },
+    ],
+    resources: [
+      { title: "Signboards", description: "Sample NGU signboard artwork", href: "https://drive.google.com/file/d/123kKVyQuASt9xQxNN37i1VLk00rR6VbK/view" },
+      { title: "Flyers & Social Media", description: "Browse the complete current marketing range", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" },
+      { title: "Social Media Post Request", description: "Send a listing or achievement to the marketing team", href: "https://form.jotform.com/251597367345064" },
+    ],
+  },
+  "open-home": {
+    title: "Open Home",
+    checklist: ["Auction Documents (if needed)", "Brochures", "Blank Contract", "Rental Appraisal (laminated)", "Floor Plans", "Broker Flyer (Prestige Finance)", "Building & Pest (if applicable)", "QR Code for Offer Link", "Business Cards", "Pens", "Buyer Guides", "Welcome Mat", "Candles / Lighter", "Speaker", "Realty Assist Flyers", "Water Bottles"],
+    apps: [
+      { name: "Basecamp", description: "Creative requests and team tasks", href: "https://launchpad.37signals.com/signin" },
+      { name: "Homepass", description: "Check in open-home attendees", href: "https://app.homepass.com/login" },
+      { name: "RealHub", description: "NGU campaign marketing templates", href: "https://realhub-frontend.realbase.io/" },
+      { name: "Realty Assist", description: "Vendor-paid marketing", href: "https://realtyassist.com.au/" },
+    ],
+    resources: [
+      { title: "Brochures", description: "Browse brochure formats and campaign collateral", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" },
+      { title: "Business Cards", description: "Sample NGU business-card artwork", href: "https://drive.google.com/file/d/1Ya3wtaE4D7impeR_2e24Pai9XGg4nssk/view" },
+    ],
+  },
+} satisfies Readonly<Record<ToolkitStageName, ToolkitStageData>>;
+
+export function ToolkitStage({ stage }: { readonly stage: ToolkitStageName }): ReactNode {
+  const data = toolkitStages[stage];
   return (
-    <section className="content-section training-section">
-      <div className="training-grid">
-        {entries.map((entry, index) => (
-          <article className="training-card" key={entry}>
-            <PlayCircle />
-            <div><h3>{entry}{type === "rex" ? ` — #${String(entries.length - index).padStart(2, "0")}` : ""}</h3><p>{type === "sales" ? "Sales training" : "Rex webinar"} · 2026</p></div>
-          </article>
-        ))}
-      </div>
-    </section>
+    <div className="toolkit-stage-page">
+      <StageChecklist title={data.title} items={data.checklist} storageKey={`ngu-${stage}-checklist`} />
+      <section className="toolkit-apps">
+        <div><p className="eyebrow">RECOMMENDED APPS</p><h2>The tools for this stage.</h2></div>
+        <div className="toolkit-app-grid">{data.apps.map((app) => <a href={app.href} target="_blank" rel="noreferrer" key={app.name}><div><h3>{app.name}</h3><p>{app.description}</p></div><ExternalLink size={18} /></a>)}</div>
+      </section>
+      <LiveDirectory kind="suppliers" />
+      <section className="toolkit-resources">
+        <p className="eyebrow">SAMPLE MARKETING MATERIALS</p>
+        <div>{data.resources.map((resource) => <a href={resource.href} target="_blank" rel="noreferrer" key={resource.title}><FileText /><span><strong>{resource.title}</strong><small>{resource.description}</small></span><ExternalLink size={18} /></a>)}</div>
+      </section>
+    </div>
   );
 }
 
+export function TrainingList({ type }: { readonly type: "sales" | "rex" }): ReactNode {
+  return <TrainingPlaylist videos={type === "sales" ? salesTrainingVideos : rexTrainingVideos} label={type === "sales" ? "Sales training" : "Rex training"} />;
+}
+
+const welcomeResources = [
+  { title: "2025 Email Signatures — NGU Brisbane", description: "Google Doc template for your NGU email signature", href: "https://drive.google.com/open?id=1HpqdppItmw-JEK-Liyj1XrANCMTQaQW3XVPobmM6Dmg" },
+  { title: "Basecamp User Guideline", description: "Open Basecamp and access your team projects", href: "https://launchpad.37signals.com/signin" },
+  { title: "Step-by-step Guide to RealHub", description: "Access NGU templates and campaign collateral", href: "https://realhub-frontend.realbase.io/" },
+  { title: "RealHub Video Tutorials", description: "Learn the core RealHub workflow", href: "https://realhub-frontend.realbase.io/" },
+  { title: "Logo & Branding Guidelines", description: "Current NGU identity and logo standards", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/NGU+Real+Estate_Logo+and+Branding+Guidelines+2025_Edgar+NEW.pdf" },
+  { title: "Marketing Materials", description: "NGU marketing material range for 2025–2026", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" },
+  { title: "Design Golden Rule", description: "The essential rule for consistent NGU design", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/Design+golden+rule+2025.pdf" },
+  { title: "Social Media Best Practice", description: "Practical guidance for representing NGU online", href: "https://www.instagram.com/ngu_real_estate/" },
+  { title: "2026 NGU Calendar", description: "Open the live company calendar", href: "https://calendar.google.com/" },
+] as const;
+
 export function WelcomePack(): ReactNode {
-  return <section className="content-section"><div className="welcome-panel"><CalendarDays /><div><h2>Your onboarding package</h2><p>Everything you need to get started at NGU, including account access, brand standards and email signatures.</p></div></div><DocumentCard title="2025 Email Signatures – NGU Brisbane" /></section>;
+  return (
+    <div className="welcome-pack-page">
+      <section className="welcome-start-grid">
+        <article><p className="eyebrow">NGU HEADSHOT</p><h2>Look like part of the team from day one.</h2><p>Your professional headshot will be taken at induction. You will receive versions for:</p><ul><li>NGU website — black curtain background</li><li>REA website — skyline background</li><li>Domain website — skyline background</li><li>Signboard and marketing — transparent background</li></ul></article>
+        <article><p className="eyebrow">EMAIL SIGNATURE</p><h2>Set up your NGU signature.</h2><p>Use the Google Doc template below. If you would like your headshot included, submit a request to the Design Team through Basecamp.</p><a href="https://drive.google.com/open?id=1HpqdppItmw-JEK-Liyj1XrANCMTQaQW3XVPobmM6Dmg" target="_blank" rel="noreferrer">Open signature template <ExternalLink size={16} /></a></article>
+      </section>
+      <section className="welcome-library"><div><CalendarDays /><div><p className="eyebrow">WELCOME PACKAGE</p><h2>Everything you need to get started.</h2></div></div><div className="welcome-resource-grid">{welcomeResources.map((resource) => <a href={resource.href} target="_blank" rel="noreferrer" key={resource.title}><FileText /><span><strong>{resource.title}</strong><small>{resource.description}</small></span><ArrowRight size={18} /></a>)}</div></section>
+    </div>
+  );
 }
 
 export function Offices(): ReactNode {

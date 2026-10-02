@@ -32,7 +32,6 @@ export const navItems: readonly NavItem[] = [
 ];
 
 export const infoNavItems: readonly NavItem[] = [
-  { label: "Agent Toolkit", href: "/info-hub/agent-toolkit" },
   { label: "Pre-List", href: "/info-hub/agent-toolkit/pre-list" },
   { label: "Pre-Sale", href: "/info-hub/agent-toolkit/pre-sale" },
   { label: "Open Home", href: "/info-hub/agent-toolkit/open-home" },
@@ -90,36 +89,6 @@ export const pages: Readonly<Record<string, SimplePage>> = {
     subtitle: "People we trust. For work done right.",
     kind: "resources",
     sections: [{ title: "CONTACT DIRECTORY", body: "Browse our universal supplier list by service category.", items: ["Photography & videography", "Building & pest", "Legal & conveyancing", "Trades & maintenance", "Styling & staging", "Finance services"] }],
-  },
-  "info-hub/agent-toolkit/pre-list": {
-    title: "Pre-List",
-    kind: "toolkit",
-    sections: [
-      { title: "PRE-LIST", items: ["Listing preparation checklist", "Appraisal templates", "Vendor communication"] },
-      { title: "RECOMMENDED APPS", items: ["Rex CRM", "CoreLogic / RP Data", "Pricefinder", "Realworks"] },
-      { title: "TRUSTED NETWORK", items: ["NGU Universal Supplier List"] },
-      { title: "SAMPLE MARKETING MATERIALS", items: ["Business Cards"] },
-    ],
-  },
-  "info-hub/agent-toolkit/pre-sale": {
-    title: "Pre-Sale",
-    kind: "toolkit",
-    sections: [
-      { title: "PRE-SALE", items: ["Campaign preparation", "Contracts and disclosure", "Vendor reporting"] },
-      { title: "RECOMMENDED APPS", items: ["RealHub", "Rex CRM", "Docusign", "REA Ignite"] },
-      { title: "TRUSTED NETWORK", items: ["NGU Universal Supplier List"] },
-      { title: "SAMPLE MARKETING MATERIALS", items: ["Signboards", "Flyers", "Social Media"] },
-    ],
-  },
-  "info-hub/agent-toolkit/open-home": {
-    title: "Open Home",
-    kind: "toolkit",
-    sections: [
-      { title: "OPEN HOME", items: ["Open-home checklist", "Buyer follow-up", "Safety and presentation"] },
-      { title: "RECOMMENDED APPS", items: ["Homepass", "Rex Mobile", "Inspect Real Estate"] },
-      { title: "TRUSTED NETWORK", items: ["NGU Universal Supplier List"] },
-      { title: "SAMPLE MARKETING MATERIALS", items: ["Brochures", "Business Cards"] },
-    ],
   },
 };
 
@@ -210,9 +179,5 @@ export const people = {
   prestige: ["Emil Juresic", "Steve Athanates", "Charles Kimmorley", "Gillian & Rob Dargusch", "Matt Hawkins", "Todd Gerhardt", "Rebecca Cuderman", "Amie Tarrant", "Daniel Parsons", "Laney McQueen", "John Karlecik", "Jason Yang", "Nhan Tran", "Leo Liu", "Dan Holmes"],
   elite: ["Robbie Witt", "Madison Miller", "Taylor Barnard", "Bryce Lee", "Leanne Arifovic", "Hayley Picker", "Rachel Hobbs", "Brady Chant"],
 } as const;
-
-export const salesTraining = ["Sales Growth & Performance", "Sales Foundations", "Maximising Your Auction Campaigns", "Sales Mastery", "Agent Accelerator", "Sales Excellence with Jet Xavier", "Sales Excellence with Adrian Bo", "New REIQ Contracts", "Seller Disclosure Requirements", "Auction Training with Tom Panos"] as const;
-
-export const rexTraining = ["Connect The Tools Together", "Update Records In Bulk", "Jump To Context Instantly", "Build Call Lists That Convert", "Keep Your Database Clean", "See Performance At A Glance", "Track Performance With Reporting", "Prospect Smarter With Property Data", "Standardise Comms With Templates", "Send Newsletters With Confidence", "Match Buyers Faster", "Capture Leads Automatically", "Work Offline With Pocket Rex", "Work Anywhere With Rex Mobile", "Save Time With AI", "Scale Consistency With Tracks", "Manage Listings End-to-end", "Automate Buyer Follow-up", "Move Appraisals Forward", "Structure Property Records", "Organise Your Contacts", "Navigate The Essentials"] as const;
 
 export const offices = ["Brisbane", "Ipswich", "Ripley & Surrounds", "Karalee", "Toowoomba", "South East", "Logan", "Lifestyle", "Ipswich Central", "Booval", "Brisbane West", "Bundaberg", "Springfield"] as const;

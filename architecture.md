@@ -42,10 +42,9 @@ flowchart TB
     corePages --> offices["/ngu-offices"]
 
     catchall --> infoHub["/info-hub"]
-    infoHub --> toolkit["/info-hub/agent-toolkit"]
-    toolkit --> preList["/info-hub/agent-toolkit/pre-list"]
-    toolkit --> preSale["/info-hub/agent-toolkit/pre-sale"]
-    toolkit --> openHome["/info-hub/agent-toolkit/open-home"]
+    infoHub --> preList["/info-hub/agent-toolkit/pre-list"]
+    infoHub --> preSale["/info-hub/agent-toolkit/pre-sale"]
+    infoHub --> openHome["/info-hub/agent-toolkit/open-home"]
     infoHub --> welcome["/info-hub/welcome-pack"]
     infoHub --> sales["/info-hub/sales-training"]
     infoHub --> rex["/info-hub/rex-training"]
@@ -53,7 +52,7 @@ flowchart TB
     classDef folder fill:#111827,color:#fff,stroke:#111827;
     classDef file fill:#e5e7eb,color:#111827,stroke:#6b7280;
     classDef route fill:#fff,color:#111827,stroke:#9ca3af;
-    class app,protected,api,corePages,infoHub,toolkit folder;
+    class app,protected,api,corePages,infoHub folder;
     class home,catchall,signIn,authApi,directoryApi file;
     class leaderboard,aml,workApps,newToNgu,cpd,people,trusted,offices,preList,preSale,openHome,welcome,sales,rex route;
 ```
@@ -104,6 +103,8 @@ flowchart LR
 - The home hero serves the supplied video locally from `public/ngu-home.mov`, with the city image retained as a loading fallback.
 - `lib/site-data.ts` is the source of truth for navigation entries, simple page definitions, training lists, people, offices, and work-app groups.
 - `components/content.tsx` contains the reusable and specialised content renderers used by the catch-all route.
+- The old standalone Agent Toolkit index route has been retired. Its Pre-List, Pre-Sale and Open Home pages remain directly accessible and combine locally saved checklists, work-app links, the live supplier directory and marketing resources.
+- Sales and Rex training use a selectable video-player layout backed by the dated links in `lib/training-data.ts`.
 - `Hero` and `Footer` provide the shared content-page framing, while `SiteShell` owns desktop and mobile navigation.
 
 ## References

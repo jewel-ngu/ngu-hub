@@ -721,10 +721,87 @@ a.calendar-event:hover { background: #111; color: #fff; }
 .contact-directory iframe { border: 1px solid #bbb; height: 650px; margin-top: 30px; width: 100%; }
 .contact-directory > a { align-items: center; background: #111; color: #fff; display: flex; font-size: 13px; font-weight: 700; gap: 9px; margin-top: 14px; padding: 14px 18px; width: fit-content; }
 
+.stage-checklist { background: var(--paper); padding: 88px clamp(24px,6vw,88px); }
+.stage-checklist-heading { align-items: flex-end; display: flex; justify-content: space-between; margin: 0 auto 34px; max-width: 1320px; }
+.stage-checklist-heading h2 { font-size: clamp(38px,5vw,68px); letter-spacing: -.05em; line-height: .98; margin: 12px 0; }
+.stage-checklist-heading > div > p:last-child { color: #666; margin: 0; }
+.stage-progress { align-items: flex-end; display: flex; flex-direction: column; }
+.stage-progress strong { font-size: 42px; letter-spacing: -.05em; }
+.stage-progress span { color: #777; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+.stage-progress-bar { background: #d8d8d4; height: 3px; margin: 0 auto 36px; max-width: 1320px; }
+.stage-progress-bar span { background: #111; display: block; height: 100%; transition: width .25s ease; }
+.stage-checklist-grid { display: grid; gap: 1px; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 auto; max-width: 1320px; }
+.stage-checklist-grid label { align-items: center; background: #fff; border: 1px solid #d6d6d2; cursor: pointer; display: flex; gap: 16px; margin: 0 -1px -1px 0; min-height: 78px; padding: 18px 22px; transition: background .2s ease,color .2s ease; }
+.stage-checklist-grid label.complete { background: #111; color: #fff; }
+.stage-checklist-grid input { height: 1px; opacity: 0; position: absolute; width: 1px; }
+.stage-checklist-grid label > span { align-items: center; border: 1px solid currentColor; border-radius: 50%; display: flex; height: 27px; justify-content: center; width: 27px; }
+.stage-checklist-grid label:not(.complete) > span svg { opacity: 0; }
+.stage-checklist-grid strong { font-size: 15px; font-weight: 500; }
+.stage-checklist-actions { display: flex; gap: 10px; justify-content: flex-end; margin: 24px auto 0; max-width: 1320px; }
+.stage-checklist-actions button { align-items: center; background: transparent; border: 1px solid #111; cursor: pointer; display: flex; font: inherit; font-size: 13px; gap: 8px; padding: 12px 16px; }
+.stage-checklist-actions button:last-child { background: #111; color: #fff; }
+
+.toolkit-apps, .toolkit-resources { padding: 88px clamp(24px,6vw,88px); }
+.toolkit-apps { background: #111; color: #fff; display: grid; gap: 64px; grid-template-columns: minmax(250px,.7fr) minmax(0,1.3fr); }
+.toolkit-apps > div { max-width: 620px; }
+.toolkit-apps h2 { font-size: clamp(38px,5vw,68px); letter-spacing: -.05em; line-height: .98; margin: 16px 0 0; }
+.toolkit-app-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+.toolkit-app-grid > a { align-items: center; border-bottom: 1px solid #3a3a3a; display: flex; gap: 18px; justify-content: space-between; min-height: 110px; padding: 18px 8px; }
+.toolkit-app-grid h3 { font-size: 19px; margin: 0 0 8px; }
+.toolkit-app-grid p { color: #999; font-size: 13px; margin: 0; }
+.toolkit-app-grid svg { flex: 0 0 auto; }
+.toolkit-stage-page .live-directory { background: #ecebe7; }
+.toolkit-resources { background: var(--paper); }
+.toolkit-resources > p { margin: 0 auto 28px; max-width: 1320px; }
+.toolkit-resources > div { display: grid; gap: 12px; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 auto; max-width: 1320px; }
+.toolkit-resources a { align-items: center; background: #fff; border: 1px solid #ccc; display: grid; gap: 18px; grid-template-columns: auto 1fr auto; min-height: 112px; padding: 24px; }
+.toolkit-resources a > svg:first-child { color: #555; stroke-width: 1.3; }
+.toolkit-resources span { display: grid; gap: 7px; }
+.toolkit-resources small { color: #777; line-height: 1.45; }
+
+.training-playlist { background: var(--paper); display: grid; gap: 24px; grid-template-columns: minmax(0,1.55fr) minmax(320px,.75fr); padding: 88px clamp(24px,6vw,88px); }
+.playlist-player { align-self: start; background: #111; color: #fff; position: sticky; top: calc(var(--announcement) + var(--header) + 18px); }
+.playlist-frame { aspect-ratio: 16 / 9; background: #050505; }
+.playlist-frame iframe { border: 0; height: 100%; width: 100%; }
+.playlist-now-playing { padding: 30px; }
+.playlist-now-playing h2 { font-size: clamp(26px,3vw,42px); letter-spacing: -.035em; line-height: 1.12; margin: 12px 0 24px; }
+.playlist-now-playing > div { align-items: center; color: #aaa; display: flex; font-size: 13px; justify-content: space-between; }
+.playlist-now-playing a { align-items: center; color: #fff; display: flex; gap: 7px; }
+.playlist-list { background: #fff; border: 1px solid #d4d4d0; max-height: 760px; overflow: auto; }
+.playlist-list-heading { align-items: center; border-bottom: 1px solid #d4d4d0; display: flex; justify-content: space-between; padding: 24px; }
+.playlist-list-heading p { margin: 0; }
+.playlist-list-heading strong { color: #777; font-size: 12px; }
+.playlist-list button { align-items: center; background: #fff; border: 0; border-bottom: 1px solid #dededb; cursor: pointer; display: grid; font: inherit; gap: 15px; grid-template-columns: auto 1fr; padding: 20px 22px; text-align: left; width: 100%; }
+.playlist-list button:hover, .playlist-list button.active { background: #111; color: #fff; }
+.playlist-list button > span:first-child { align-items: center; border: 1px solid currentColor; border-radius: 50%; display: flex; height: 34px; justify-content: center; width: 34px; }
+.playlist-list button > span:last-child { display: grid; gap: 7px; }
+.playlist-list button strong { font-size: 14px; line-height: 1.35; }
+.playlist-list button small { color: #777; }
+.playlist-list button.active small, .playlist-list button:hover small { color: #aaa; }
+
+.welcome-pack-page { background: var(--paper); }
+.welcome-start-grid { display: grid; gap: 1px; grid-template-columns: repeat(2,minmax(0,1fr)); padding: 88px clamp(24px,6vw,88px) 0; }
+.welcome-start-grid article { background: #fff; border-top: 3px solid #111; padding: 38px; }
+.welcome-start-grid h2 { font-size: clamp(30px,3.5vw,50px); letter-spacing: -.04em; line-height: 1; margin: 18px 0 24px; }
+.welcome-start-grid article > p:not(.eyebrow), .welcome-start-grid li { color: #666; line-height: 1.65; }
+.welcome-start-grid a { align-items: center; background: #111; color: #fff; display: inline-flex; font-size: 13px; gap: 8px; margin-top: 16px; padding: 14px 18px; }
+.welcome-library { padding: 64px clamp(24px,6vw,88px) 96px; }
+.welcome-library > div:first-child { align-items: center; display: flex; gap: 24px; margin: 0 auto 34px; max-width: 1320px; }
+.welcome-library > div:first-child > svg { height: 40px; stroke-width: 1.2; width: 40px; }
+.welcome-library h2 { font-size: clamp(34px,4vw,56px); letter-spacing: -.045em; margin: 8px 0 0; }
+.welcome-resource-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 auto; max-width: 1320px; }
+.welcome-resource-grid a { align-items: center; background: #fff; border: 1px solid #d4d4d0; display: grid; gap: 18px; grid-template-columns: auto 1fr auto; margin: 0 -1px -1px 0; min-height: 112px; padding: 24px; }
+.welcome-resource-grid a > svg:first-child { color: #555; stroke-width: 1.3; }
+.welcome-resource-grid span { display: grid; gap: 8px; }
+.welcome-resource-grid small { color: #777; line-height: 1.4; }
+
 @media (max-width: 1050px) {
   .apps-page .app-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .checklist-groups { grid-template-columns: 1fr 1fr; }
   .sample-documents > div { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .training-playlist { grid-template-columns: 1fr; }
+  .playlist-player { position: static; }
+  .playlist-list { max-height: 680px; }
 }
 
 @media (max-width: 760px) {
@@ -752,10 +829,19 @@ a.calendar-event:hover { background: #111; color: #fff; }
   .people-page .winner .award-category { margin-bottom: 20px; }
   .award-rule { max-width: 330px; margin-bottom: 20px; }
   .drawer-contacts { grid-template-columns: 1fr 1fr; }
+  .stage-checklist-heading { align-items: flex-start; flex-direction: column; gap: 20px; }
+  .stage-progress { align-items: flex-start; }
+  .stage-checklist-grid, .toolkit-app-grid, .toolkit-resources > div, .welcome-start-grid, .welcome-resource-grid { grid-template-columns: 1fr; }
+  .toolkit-apps { gap: 40px; grid-template-columns: 1fr; }
+  .training-playlist { padding-left: 18px; padding-right: 18px; }
+  .playlist-now-playing { padding: 24px; }
+  .playlist-now-playing > div { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .welcome-start-grid { padding-top: 64px; }
+  .welcome-start-grid article { padding: 28px 22px; }
 }
 
 @media print {
-  .announcement, .site-header, .page-hero, .footer, .checklist-actions, .staff-tabs, .new-ngu-page > section:not(.onboarding-checklist) { display: none !important; }
+  .announcement, .site-header, .page-hero, .footer, .checklist-actions, .staff-tabs, .stage-checklist-actions, .toolkit-stage-page > section:not(.stage-checklist), .new-ngu-page > section:not(.onboarding-checklist) { display: none !important; }
   .onboarding-checklist { padding: 0; }
   .checklist-groups { grid-template-columns: repeat(3,1fr); }
 }
