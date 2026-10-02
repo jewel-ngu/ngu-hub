@@ -170,18 +170,18 @@ button { font: inherit; }
 .socials img { filter: brightness(0) invert(1); height: 18px; object-fit: contain; width: 18px; }
 .footer-legal { border-top: 1px solid #333; color: #737373; font-size: 11px; grid-column: 1 / -1; margin: 18px 0 0; padding-top: 24px; }
 
-.sign-in-page { align-items: center; background: linear-gradient(rgba(0,0,0,.54),rgba(0,0,0,.75)), url('/images/home-hero.png') center/cover; display: flex; justify-content: center; min-height: 100vh; padding: 28px; }
-.sign-in-card { background: rgba(255,255,255,.98); box-shadow: 0 28px 80px rgba(0,0,0,.35); max-width: 460px; padding: 52px; text-align: center; width: 100%; }
-.sign-in-card > img { filter: brightness(0); height: 58px; object-fit: contain; width: 112px; }
-.sign-in-kicker { font-size: 11px !important; font-weight: 700; letter-spacing: .22em; margin: 26px 0 14px !important; }
-.sign-in-card h1 { font-size: 42px; letter-spacing: -.035em; margin: 0 0 14px; }
-.sign-in-card p { color: #646460; line-height: 1.55; margin: 0 auto 28px; }
-.sign-in-error { background: #fff0f0; border: 1px solid #e9b4b4; color: #8a2020 !important; font-size: 14px; padding: 12px; }
-.google-sign-in { align-items: center; background: #111; border: 0; color: #fff; cursor: pointer; display: flex; font-weight: 700; gap: 14px; justify-content: center; min-height: 54px; padding: 12px 20px; width: 100%; }
+.sign-in-page { align-items: center; background: linear-gradient(rgba(0,0,0,.34),rgba(0,0,0,.62)), url('/images/work-apps-hero.png') center/cover; display: flex; justify-content: center; min-height: 100vh; padding: clamp(18px,4vw,48px); }
+.sign-in-card { align-items: center; background: var(--paper); border-top: 4px solid var(--ink); box-shadow: 0 28px 80px rgba(0,0,0,.42); display: flex; flex-direction: column; max-width: 520px; padding: clamp(40px,6vw,64px); text-align: center; width: 100%; }
+.sign-in-card > img { display: block; filter: brightness(0); height: 64px; margin: 0 auto; object-fit: contain; width: 138px; }
+.sign-in-kicker { font-size: 11px !important; font-weight: 700; letter-spacing: .22em; margin: 30px 0 16px !important; text-align: center; width: 100%; }
+.sign-in-card h1 { font-size: clamp(42px,5vw,56px); letter-spacing: -.035em; line-height: 1; margin: 0 0 20px; text-align: center; width: 100%; }
+.sign-in-card p { color: var(--muted); font-size: 17px; line-height: 1.5; margin: 0 auto 32px; max-width: 390px; text-align: center; }
+.sign-in-error { background: #fff0f0; border: 1px solid #e9b4b4; color: #8a2020 !important; font-size: 14px !important; max-width: 390px; padding: 12px; width: 100%; }
+.google-sign-in { align-items: center; background: #111; border: 1px solid #111; color: #fff; cursor: pointer; display: flex; font-weight: 700; gap: 14px; justify-content: center; min-height: 60px; padding: 14px 24px; transition: background .3s cubic-bezier(.5,0,0,1), color .3s cubic-bezier(.5,0,0,1); width: min(100%,390px); }
 .google-sign-in:hover { background: #292929; }
 .google-sign-in:disabled { cursor: wait; opacity: .68; }
 .google-sign-in span { align-items: center; background: #fff; border-radius: 50%; color: #4285f4; display: flex; font-family: Arial,sans-serif; font-size: 18px; height: 26px; justify-content: center; width: 26px; }
-.sign-in-card > small { color: #777; display: block; font-size: 12px; line-height: 1.5; margin-top: 20px; }
+.sign-in-card > small { color: var(--muted); display: block; font-size: 12px; line-height: 1.55; margin: 22px auto 0; max-width: 390px; text-align: center; }
 
 @media (max-width: 900px) {
   :root { --announcement: 54px; --header: 82px; }
@@ -243,7 +243,7 @@ button { font: inherit; }
   .footer-legal { grid-column: 1; }
   .sign-in-page { padding: 18px; }
   .sign-in-card { padding: 40px 24px; }
-  .sign-in-card h1 { font-size: 36px; }
+  .sign-in-card h1 { font-size: 40px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
