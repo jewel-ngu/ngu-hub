@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { infoNavItems, navItems } from "@/lib/site-data";
-import { supportContacts } from "@/lib/support-contacts";
 
 type SiteShellProps = {
   readonly children: ReactNode;
@@ -66,6 +65,7 @@ function PrimaryNavigation(): ReactNode {
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "AML/CTF", href: "/amlctf" },
     { label: "Info Hub", href: "/info-hub" },
+    { label: "New to NGU", href: "/new-to-ngu" },
   ] as const;
 
   return (
@@ -101,9 +101,10 @@ export function SiteShell({ children }: SiteShellProps): ReactNode {
     };
   }, [drawerOpen]);
 
-  const account = (
+  const drawerContacts = (
     <div className="drawer-contacts">
-      {supportContacts.map(([title, description, emails]) => <div key={title}><h3>{title}</h3>{description && <p>{description}</p>}{(typeof emails === "string" ? [emails] : emails).map((email) => <a key={email} href={`mailto:${email}`}>{email}</a>)}</div>)}
+      <div><h3>Sales Admin</h3><p>REA, Domain, Realworks, Form 6</p><a href="mailto:admin@ngurealestate.com.au">admin@ngurealestate.com.au</a></div>
+      <div><h3>Design &amp; Branding</h3><p>RealHub, design requests, branding enquiries</p><a href="mailto:design@ngurealestate.com.au">design@ngurealestate.com.au</a></div>
     </div>
   );
 
@@ -138,7 +139,7 @@ export function SiteShell({ children }: SiteShellProps): ReactNode {
             <div className="drawer-content">
               <p>EXPLORE NGU</p>
               <Navigation onNavigate={() => setDrawerOpen(false)} />
-              {account}
+              {drawerContacts}
             </div>
           </aside>
         </div>

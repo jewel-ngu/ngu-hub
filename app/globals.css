@@ -35,7 +35,7 @@ button { font: inherit; }
 .drawer-header .brand img { filter: brightness(0) invert(1); }
 .drawer-header .brand > span { background: #484848; }
 .drawer-close { border-color: #383838; color: #fff; }
-.drawer-content { display: block; min-height: 0; padding-top: 28px; }
+.drawer-content { display: flex; flex-direction: column; min-height: calc(100dvh - 104px); padding-top: 28px; }
 .drawer-content > p { color: #828282; font-size: 11px; font-weight: 700; letter-spacing: .2em; margin: 7px 0 0; }
 .site-nav { display: grid; gap: 0 24px; grid-template-columns: repeat(2,minmax(0,1fr)); margin-top: 14px; }
 .site-nav > a, .nav-row > a { border-bottom: 1px solid #333; color: #f2f2f2; display: block; font-size: clamp(16px,1.45vw,21px); line-height: 1.15; padding: 10px 0; transition: color .2s ease, padding .2s ease; }
@@ -121,9 +121,12 @@ button { font: inherit; }
 .link-card svg { bottom: 32px; position: absolute; right: 32px; stroke-width: 1.4; }
 
 .work-apps-intro { background: #fff; margin: 0 auto; max-width: 1320px; padding: 78px clamp(28px,6vw,88px) 92px; }
-.work-apps-intro > div { display: flex; flex-wrap: wrap; gap: 9px 34px; margin-bottom: 42px; }
-.work-apps-intro a { border-bottom: 1px solid #111; font-size: 13px; padding: 4px 0; }
-.work-apps-intro p { background: var(--mist); font-size: 20px; line-height: 1.65; margin: 0; max-width: 940px; padding: 34px; }
+.work-apps-intro > p { background: #111; color: #fff; font-size: 20px; line-height: 1.6; margin: 0 0 1px; max-width: none; padding: 34px; width: 100%; }
+.work-apps-categories { display: grid; gap: 1px; grid-template-columns: repeat(4,minmax(0,1fr)); }
+.work-apps-categories a { align-items: flex-start; background: var(--mist); display: flex; flex-direction: column; gap: 24px; justify-content: space-between; min-height: 128px; padding: 22px; transition: background .25s ease,color .25s ease; }
+.work-apps-categories a:hover { background: #111; color: #fff; }
+.work-apps-categories span { color: #777; font-size: 10px; font-weight: 700; letter-spacing: .18em; }
+.work-apps-categories strong { font-size: 15px; line-height: 1.2; }
 .app-grid { display: grid; gap: 18px; grid-template-columns: repeat(4,minmax(0,1fr)); }
 .app-card { border: 1px solid var(--line); min-height: 270px; overflow: hidden; padding: 0 22px 24px; transition: transform .2s ease, box-shadow .2s ease; }
 .app-card:hover { box-shadow: 0 18px 42px rgba(0,0,0,.08); transform: translateY(-3px); }
@@ -196,7 +199,7 @@ button { font: inherit; }
   .drawer-header { height: 96px; }
   .drawer-close { border: 0; padding-left: 12px; }
   .drawer-close > span { display: none; }
-  .drawer-content { display: block; padding-top: 24px; }
+  .drawer-content { min-height: calc(100dvh - 96px); padding-top: 24px; }
   .drawer-content > p { margin: 0 0 10px; }
   .site-nav { display: grid; gap: 0 18px; grid-template-columns: repeat(2,minmax(0,1fr)); }
   .site-nav > a, .nav-row > a { font-size: clamp(15px,4.2vw,19px); padding: 10px 0; }
@@ -226,7 +229,8 @@ button { font: inherit; }
   .home-links { grid-template-columns: 1fr; }
   .link-card { border-bottom: 1px solid #fff; min-height: 205px; }
   .work-apps-intro { padding: 62px 22px; }
-  .work-apps-intro p { font-size: 17px; padding: 24px; }
+  .work-apps-intro > p { font-size: 17px; padding: 24px; }
+  .work-apps-categories { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .app-grid { gap: 10px; grid-template-columns: repeat(2,minmax(0,1fr)); }
   .app-card { min-height: 220px; padding: 0 13px 18px; }
   .app-monogram { font-size: 30px; height: 125px; margin: 0 -13px 17px; }
@@ -709,7 +713,7 @@ a.calendar-event:hover { background: #111; color: #fff; }
 .office-details h3 { margin: 0 0 14px; }
 .office-details p { min-height: 44px; }
 .office-link { align-items: center; border-top: 1px solid #ddd; display: flex; justify-content: space-between; margin-top: 24px; padding-top: 18px; }
-.drawer-contacts { display: grid; gap: 22px 28px; grid-template-columns: 1fr 1fr; margin-top: 36px; }
+.drawer-contacts { display: grid; gap: 22px 28px; grid-template-columns: 1fr 1fr; margin-top: auto; padding: 42px 0 28px; }
 .drawer-contacts > div { border-top: 1px solid #555; min-width: 0; padding-top: 15px; }
 .drawer-contacts h3 { font-size: 12px; letter-spacing: .15em; margin: 0 0 8px; text-transform: uppercase; }
 .drawer-contacts p { color: #aaa; font-size: 12px; margin: 0 0 8px; }
@@ -747,7 +751,7 @@ a.calendar-event:hover { background: #111; color: #fff; }
   .people-page .winner h2 { font-size: 26px; }
   .people-page .winner .award-category { margin-bottom: 20px; }
   .award-rule { max-width: 330px; margin-bottom: 20px; }
-  .drawer-contacts { grid-template-columns: 1fr; }
+  .drawer-contacts { grid-template-columns: 1fr 1fr; }
 }
 
 @media print {

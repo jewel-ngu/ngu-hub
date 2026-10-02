@@ -104,8 +104,8 @@ export function WorkApps(): ReactNode {
     <div className="content-stack apps-page">
       <section className="work-apps-intro">
         <SectionHeading>QUICK LINKS</SectionHeading>
-        <div>{appGroups.map((group) => <a href={`#${group.title.toLowerCase().replaceAll(" ", "-")}`} key={group.title}>{group.title}</a>)}</div>
         <p>NGU runs on a suite of software tools designed to keep every department connected and operating efficiently. Some platforms are used company-wide, while others are specific to your role. Browse by category below to find what you need.</p>
+        <nav className="work-apps-categories" aria-label="Work app categories">{appGroups.map((group, index) => <a href={`#${group.title.toLowerCase().replaceAll(" ", "-")}`} key={group.title}><span>{String(index + 1).padStart(2, "0")}</span><strong>{group.title}</strong></a>)}</nav>
       </section>
       {appGroups.map((group) => (
         <section className="content-section" id={group.title.toLowerCase().replaceAll(" ", "-")} key={group.title}>
