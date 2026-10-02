@@ -4,10 +4,15 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { SessionControls } from "@/components/session-controls";
 import { infoNavItems, navItems } from "@/lib/site-data";
 
 type SiteShellProps = {
   readonly children: ReactNode;
+  readonly currentUser: {
+    readonly email: string;
+    readonly name: string;
+  };
 };
 
 function Brand(): ReactNode {
@@ -78,7 +83,7 @@ function PrimaryNavigation(): ReactNode {
   );
 }
 
-export function SiteShell({ children }: SiteShellProps): ReactNode {
+export function SiteShell({ children, currentUser }: SiteShellProps): ReactNode {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -142,6 +147,7 @@ export function SiteShell({ children }: SiteShellProps): ReactNode {
               <p>EXPLORE NGU</p>
               <Navigation onNavigate={() => setDrawerOpen(false)} />
               {drawerContacts}
+              <SessionControls user={currentUser} />
             </div>
           </aside>
         </div>

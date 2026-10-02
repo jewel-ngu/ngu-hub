@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
-import { ALLOWED_EMAIL_DOMAIN } from "@/lib/auth-policy";
+import { ALLOWED_EMAIL_DOMAINS_LABEL } from "@/lib/auth-policy";
 
 type SignInCardProps = {
   readonly oauthError?: string;
@@ -43,7 +43,7 @@ export function SignInCard({ oauthError }: SignInCardProps): ReactNode {
           {pending ? "Opening Google…" : "Continue with Google"}
         </button>
 
-        <small>Access is limited to @{ALLOWED_EMAIL_DOMAIN} accounts. No invite is required.</small>
+        <small>Access is limited to {ALLOWED_EMAIL_DOMAINS_LABEL} accounts. No invite is required.</small>
       </section>
     </main>
   );

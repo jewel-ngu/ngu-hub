@@ -1,4 +1,10 @@
-export const ALLOWED_EMAIL_DOMAIN = "ngurealestate.com.au";
+export const ALLOWED_EMAIL_DOMAINS = [
+  "ngurealestate.com.au",
+  "nguteam.com",
+  "ngugroup.com",
+] as const;
+
+export const ALLOWED_EMAIL_DOMAINS_LABEL = ALLOWED_EMAIL_DOMAINS.map((domain) => `@${domain}`).join(", ");
 
 export function isAllowedEmail(email: string | null | undefined): boolean {
   if (!email) {
@@ -11,6 +17,6 @@ export function isAllowedEmail(email: string | null | undefined): boolean {
   return (
     separatorIndex > 0 &&
     separatorIndex === normalizedEmail.lastIndexOf("@") &&
-    normalizedEmail.slice(separatorIndex + 1) === ALLOWED_EMAIL_DOMAIN
+    ALLOWED_EMAIL_DOMAINS.some((domain) => normalizedEmail.slice(separatorIndex + 1) === domain)
   );
 }

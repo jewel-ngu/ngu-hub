@@ -1,9 +1,4 @@
-function authenticationDeferred(): Response {
-  return Response.json(
-    { message: "Authentication will be enabled in a later phase." },
-    { status: 503 },
-  );
-}
+import { toNextJsHandler } from "better-auth/next-js";
+import { auth } from "@/lib/auth";
 
-export const GET = authenticationDeferred;
-export const POST = authenticationDeferred;
+export const { GET, POST } = toNextJsHandler(auth);

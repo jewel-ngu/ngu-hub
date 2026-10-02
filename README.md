@@ -7,7 +7,6 @@ A native Next.js recreation of the private NGU Real Estate team hub. The UI uses
 ```sh
 pnpm install
 cp .env.example .env.local
-pnpm dlx auth@1.7.6 migrate --yes
 pnpm dev
 ```
 
@@ -15,7 +14,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Authentication
 
-The hub uses Better Auth with Google Workspace. New users are provisioned automatically—there is no invite list—but Google must return the verified hosted-domain claim for `ngurealestate.com.au`. A second server-side policy rejects any profile whose email does not exactly match that domain.
+The hub uses Better Auth with Google Workspace and stateless encrypted sessions. New users are provisioned automatically—there is no invite list—but their verified Google email must use `ngurealestate.com.au`, `nguteam.com`, or `ngugroup.com`. A server-side allowlist rejects every other domain.
 
 Create a Google Cloud OAuth 2.0 **Web application**, then add this authorized redirect URI for local development:
 
@@ -23,7 +22,7 @@ Create a Google Cloud OAuth 2.0 **Web application**, then add this authorized re
 http://localhost:3000/api/auth/callback/google
 ```
 
-For production, add the same path on the deployed origin. Copy `.env.example` to `.env.local` and provide the Better Auth URL and secret plus the Google client ID and client secret. Run the migration command above once for each new database before starting the app. The default local SQLite database is `auth.db` and is excluded from Git.
+For production, add the same path on the deployed origin. Copy `.env.example` to `.env.local` and provide the Better Auth URL and secret plus the Google client ID and client secret. Add the same variables to Vercel before deploying. Better Auth stores the seven-day session in an encrypted cookie, so this setup does not require a database.
 
 ## Scripts
 

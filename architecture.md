@@ -1,12 +1,12 @@
 # NGU Hub Architecture
 
-This document maps the website's public page hierarchy and the Next.js files that render it.
+This document maps the private website hierarchy and the Next.js files that render it.
 
 ## Live directories and monthly award
 
 The Our People and Trusted Network directories use `components/live-directory.tsx` and the read-only `/api/directory` endpoint. Google Sheets remains the source of truth. Tabs are discovered from the existing sheet, refreshed every five minutes, and rendered as native searchable tables. Supplier hyperlinks are preserved. Employment dates, internal staff groups, and labelled access credentials are not returned to the browser. No sheet permissions are changed. If Google removes anonymous read access, the view shows an error and a source-sheet link; authenticated Google access would then need separate setup.
 
-The monthly award is currently maintained in `OurPeople` in `components/content.tsx`. An admin editor is not implemented, pending approval. A production editor needs an administrator allowlist, working authentication, persistent award records and image storage, with preview/publish controls. The local preview currently does not enforce sign-in; do not expose an editor publicly without adding authorization.
+The monthly award is currently maintained in `OurPeople` in `components/content.tsx`. An admin editor is not implemented, pending approval. A production editor still needs an administrator allowlist, persistent award records and image storage, with preview/publish controls.
 
 The homepage video is served locally from `public/ngu-home.mov` (the supplied 39.5-second original), instead of Google's download-warning response. It autoplays muted, loops, and has no visible controls. Before a production deployment, transcode the 218 MB source to a smaller web-optimized MP4 and update `components/hero.tsx`.
 
@@ -93,9 +93,10 @@ flowchart LR
 
 ## Rendering model
 
-- `app/(protected)/layout.tsx` applies the shared `SiteShell` to every Hub route. Authentication remains deferred.
+- `app/(protected)/layout.tsx` verifies the Better Auth session before applying the shared `SiteShell` to every Hub route. Google Workspace identities are limited to the `ngurealestate.com.au`, `nguteam.com`, and `ngugroup.com` domains, and sessions are stored in encrypted cookies.
 - `app/(protected)/page.tsx` owns the bespoke home-page sections and loads upcoming events.
 - `app/(protected)/[...slug]/page.tsx` converts the URL segments to a route key, rejects unknown routes with `notFound()`, and selects either data-driven content or a specialised component.
+- `app/api/directory/route.ts` verifies the same server-side session before returning live directory data.
 - `lib/calendar.ts` reads the public NGU Google Calendar feed, expands recurring events, and refreshes the home-page event data every five minutes.
 - `components/event-showcase.tsx` renders the responsive carousel, live countdown, event artwork, and Google Meet link.
 - `components/company-video.tsx` loads the NGU introduction video when its section enters the viewport and pauses it when it leaves.

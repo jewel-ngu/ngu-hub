@@ -1,6 +1,13 @@
 import { directoryIds, parseCsv, parseDirectoryTabs, restoreSheetLinks, redactAccessDetails } from "@/lib/directory";
+import { auth } from "@/lib/auth";
 
 export async function GET(request: Request): Promise<Response> {
+  const session = await auth.api.getSession({ headers: request.headers });
+
+  if (!session) {
+    return Response.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const params = new URL(request.url).searchParams;
   const kind = params.get("kind");
   if (kind !== "people" && kind !== "suppliers") return Response.json({ error: "Unknown directory" }, { status: 400 });

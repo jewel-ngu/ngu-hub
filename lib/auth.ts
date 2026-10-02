@@ -1,6 +1,5 @@
-import Database from "better-sqlite3";
 import { betterAuth } from "better-auth";
-import { ALLOWED_EMAIL_DOMAIN, isAllowedEmail } from "@/lib/auth-policy";
+import { ALLOWED_EMAIL_DOMAINS_LABEL, isAllowedEmail } from "@/lib/auth-policy";
 
 function requiredEnvironmentVariable(name: string): string {
   const value = process.env[name]?.trim();
@@ -12,23 +11,29 @@ function requiredEnvironmentVariable(name: string): string {
   return value;
 }
 
-const database = new Database(process.env.BETTER_AUTH_DATABASE_PATH ?? "./auth.db");
-database.pragma("journal_mode = WAL");
-
 export const auth = betterAuth({
   appName: "NGU Hub",
   baseURL: requiredEnvironmentVariable("BETTER_AUTH_URL"),
-  database,
   secret: requiredEnvironmentVariable("BETTER_AUTH_SECRET"),
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 100,
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
+  },
   socialProviders: {
     google: {
       clientId: requiredEnvironmentVariable("GOOGLE_CLIENT_ID"),
       clientSecret: requiredEnvironmentVariable("GOOGLE_CLIENT_SECRET"),
-      hd: ALLOWED_EMAIL_DOMAIN,
+      hd: "*",
       prompt: "select_account",
       requireEmailVerification: true,
     },
   },
+  trustedOrigins: [requiredEnvironmentVariable("BETTER_AUTH_URL")],
   user: {
     validateUserInfo: ({ user }) => {
       if (isAllowedEmail(user.email)) {
@@ -37,7 +42,7 @@ export const auth = betterAuth({
 
       return {
         error: "email_not_allowed",
-        errorDescription: `Use your @${ALLOWED_EMAIL_DOMAIN} Google Workspace account to sign in.`,
+        errorDescription: `Use an approved NGU Google Workspace account (${ALLOWED_EMAIL_DOMAINS_LABEL}) to sign in.`,
       };
     },
   },
