@@ -391,8 +391,10 @@ export function ToolkitStage({ stage }: { readonly stage: ToolkitStageName }): R
     <div className="toolkit-stage-page">
       <StageChecklist title={data.title} items={data.checklist} storageKey={`ngu-${stage}-checklist`} />
       <section className="toolkit-apps">
-        <div><p className="eyebrow">RECOMMENDED APPS</p><h2>The tools for this stage.</h2></div>
-        <div className="toolkit-app-grid">{data.apps.map((app) => <a href={app.href} target="_blank" rel="noreferrer" key={app.name}><div><h3>{app.name}</h3><p>{app.description}</p></div><ExternalLink size={18} /></a>)}</div>
+        <div className="toolkit-apps-inner">
+          <div><p className="eyebrow">RECOMMENDED APPS</p><h2>The tools for this stage.</h2></div>
+          <div className="toolkit-app-grid">{data.apps.map((app) => <a href={app.href} target="_blank" rel="noreferrer" key={app.name}><div><h3>{app.name}</h3><p>{app.description}</p></div><ExternalLink size={18} /></a>)}</div>
+        </div>
       </section>
       <LiveDirectory kind="suppliers" />
       <section className="toolkit-resources">

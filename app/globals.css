@@ -742,8 +742,9 @@ a.calendar-event:hover { background: #111; color: #fff; }
 .stage-checklist-actions button:last-child { background: #111; color: #fff; }
 
 .toolkit-apps, .toolkit-resources { padding: 88px clamp(24px,6vw,88px); }
-.toolkit-apps { background: #111; color: #fff; display: grid; gap: 64px; grid-template-columns: minmax(250px,.7fr) minmax(0,1.3fr); }
-.toolkit-apps > div { max-width: 620px; }
+.toolkit-apps { background: #111; color: #fff; }
+.toolkit-apps-inner { display: grid; gap: 64px; grid-template-columns: minmax(250px,.7fr) minmax(0,1.3fr); margin: 0 auto; max-width: 1320px; width: 100%; }
+.toolkit-apps-inner > div:first-child { max-width: 620px; }
 .toolkit-apps h2 { font-size: clamp(38px,5vw,68px); letter-spacing: -.05em; line-height: .98; margin: 16px 0 0; }
 .toolkit-app-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
 .toolkit-app-grid > a { align-items: center; border-bottom: 1px solid #3a3a3a; display: flex; gap: 18px; justify-content: space-between; min-height: 110px; padding: 18px 8px; }
@@ -832,7 +833,7 @@ a.calendar-event:hover { background: #111; color: #fff; }
   .stage-checklist-heading { align-items: flex-start; flex-direction: column; gap: 20px; }
   .stage-progress { align-items: flex-start; }
   .stage-checklist-grid, .toolkit-app-grid, .toolkit-resources > div, .welcome-start-grid, .welcome-resource-grid { grid-template-columns: 1fr; }
-  .toolkit-apps { gap: 40px; grid-template-columns: 1fr; }
+  .toolkit-apps-inner { gap: 40px; grid-template-columns: 1fr; }
   .training-playlist { padding-left: 18px; padding-right: 18px; }
   .playlist-now-playing { padding: 24px; }
   .playlist-now-playing > div { align-items: flex-start; flex-direction: column; gap: 12px; }
