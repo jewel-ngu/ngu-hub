@@ -180,7 +180,8 @@ button { font: inherit; }
 .google-sign-in { align-items: center; background: #111; border: 1px solid #111; color: #fff; cursor: pointer; display: flex; font-weight: 700; gap: 14px; justify-content: center; min-height: 60px; padding: 14px 24px; transition: background .3s cubic-bezier(.5,0,0,1), color .3s cubic-bezier(.5,0,0,1); width: min(100%,390px); }
 .google-sign-in:hover { background: #292929; }
 .google-sign-in:disabled { cursor: wait; opacity: .68; }
-.google-sign-in span { align-items: center; background: #fff; border-radius: 50%; color: #4285f4; display: flex; font-family: Arial,sans-serif; font-size: 18px; height: 26px; justify-content: center; width: 26px; }
+.google-sign-in span { align-items: center; background: #fff; border-radius: 50%; display: flex; height: 28px; justify-content: center; width: 28px; }
+.google-sign-in span svg { display: block; height: 18px; width: 18px; }
 .sign-in-card > small { color: var(--muted); display: block; font-size: 12px; line-height: 1.55; margin: 22px auto 0; max-width: 390px; text-align: center; }
 
 @media (max-width: 900px) {
