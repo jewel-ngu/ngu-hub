@@ -1,11 +1,14 @@
 import { directoryIds, parseCsv, parseDirectoryTabs, restoreSheetLinks, redactAccessDetails } from "@/lib/directory";
 import { auth } from "@/lib/auth";
+import { isLocalAccessEnabled } from "@/lib/local-access";
 
 export async function GET(request: Request): Promise<Response> {
-  const session = await auth.api.getSession({ headers: request.headers });
+  if (!isLocalAccessEnabled()) {
+    const session = await auth.api.getSession({ headers: request.headers });
 
-  if (!session) {
-    return Response.json({ error: "Authentication required" }, { status: 401 });
+    if (!session) {
+      return Response.json({ error: "Authentication required" }, { status: 401 });
+    }
   }
 
   const params = new URL(request.url).searchParams;

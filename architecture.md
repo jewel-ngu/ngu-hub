@@ -93,6 +93,7 @@ flowchart LR
 
 ## Rendering model
 
+- Local development can use `LOCAL_DEV_ACCESS=true` to preview the protected Hub without Google OAuth or local Google credentials. The bypass is accepted only while `NODE_ENV=development` and `BETTER_AUTH_URL` points to `localhost`, `127.0.0.1`, or `[::1]`; Vercel production always requires its real Google credentials.
 - `app/(protected)/layout.tsx` verifies the Better Auth session before applying the shared `SiteShell` to every Hub route. Google Workspace identities are limited to the `ngurealestate.com.au`, `nguteam.com`, and `ngugroup.com` domains, and sessions are stored in encrypted cookies.
 - `app/(protected)/page.tsx` owns the bespoke home-page sections and loads upcoming events.
 - `app/(protected)/[...slug]/page.tsx` converts the URL segments to a route key, rejects unknown routes with `notFound()`, and selects either data-driven content or a specialised component.

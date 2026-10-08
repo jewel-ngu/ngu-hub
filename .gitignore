@@ -14,3 +14,4 @@ public/ngu-home.mov
 *.db
 *.db-shm
 *.db-wal
+.vercel

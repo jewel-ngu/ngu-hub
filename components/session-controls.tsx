@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 type SessionControlsProps = {
+  readonly isLocalPreview?: boolean;
   readonly user: {
     readonly email: string;
     readonly name: string;
   };
 };
 
-export function SessionControls({ user }: SessionControlsProps): ReactNode {
+export function SessionControls({ isLocalPreview = false, user }: SessionControlsProps): ReactNode {
   const router = useRouter();
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
@@ -34,13 +35,15 @@ export function SessionControls({ user }: SessionControlsProps): ReactNode {
   return (
     <div className="drawer-session">
       <div>
-        <span>Signed in as</span>
+        <span>{isLocalPreview ? "Local preview" : "Signed in as"}</span>
         <strong>{user.name}</strong>
         <small>{user.email}</small>
       </div>
-      <button disabled={pending} onClick={signOut} type="button">
-        {pending ? "Signing out…" : "Sign out"}
-      </button>
+      {!isLocalPreview && (
+        <button disabled={pending} onClick={signOut} type="button">
+          {pending ? "Signing out…" : "Sign out"}
+        </button>
+      )}
       {error && <p className="drawer-session-error" role="alert">{error}</p>}
     </div>
   );

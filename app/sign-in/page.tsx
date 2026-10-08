@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { SignInCard } from "@/components/sign-in-card";
 import { auth } from "@/lib/auth";
+import { isLocalAccessEnabled } from "@/lib/local-access";
 
 type SignInPageProps = {
   readonly searchParams: Promise<{ readonly error?: string | readonly string[] }>;
@@ -13,6 +14,10 @@ function firstValue(value: string | readonly string[] | undefined): string | und
 }
 
 export default async function SignInPage({ searchParams }: SignInPageProps): Promise<ReactNode> {
+  if (isLocalAccessEnabled()) {
+    redirect("/");
+  }
+
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (session) {

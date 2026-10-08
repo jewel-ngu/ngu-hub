@@ -13,6 +13,7 @@ type SiteShellProps = {
     readonly email: string;
     readonly name: string;
   };
+  readonly isLocalPreview?: boolean;
 };
 
 function Brand(): ReactNode {
@@ -83,7 +84,7 @@ function PrimaryNavigation(): ReactNode {
   );
 }
 
-export function SiteShell({ children, currentUser }: SiteShellProps): ReactNode {
+export function SiteShell({ children, currentUser, isLocalPreview = false }: SiteShellProps): ReactNode {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -147,7 +148,7 @@ export function SiteShell({ children, currentUser }: SiteShellProps): ReactNode 
               <p>EXPLORE NGU</p>
               <Navigation onNavigate={() => setDrawerOpen(false)} />
               {drawerContacts}
-              <SessionControls user={currentUser} />
+              <SessionControls isLocalPreview={isLocalPreview} user={currentUser} />
             </div>
           </aside>
         </div>
