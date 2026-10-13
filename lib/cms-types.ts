@@ -68,6 +68,7 @@ export type CmsContent = {
     readonly category: string;
     readonly imageUrl: string;
     readonly imagePosition: string;
+    readonly imageScale?: number;
   };
   readonly people: {
     readonly prestige: readonly EditablePerson[];
@@ -134,6 +135,7 @@ export const DEFAULT_CMS_CONTENT: CmsContent = {
     category: "BY SETTLED COMMISSIONS",
     imageUrl: "/images/agent-of-the-month.png",
     imagePosition: "right bottom",
+    imageScale: 100,
   },
   people: {
     prestige: peopleGroup(prestigeNames, prestigeRoles, 6),
@@ -203,7 +205,7 @@ export function isCmsContent(value: unknown): value is CmsContent {
 
   return validPages && typeof announcement.enabled === "boolean" && isLimitedString(announcement.message, 160) && isLimitedString(announcement.linkLabel, 160) && isSafeLink(announcement.href)
     && isLimitedString(home.kicker, 100) && isLimitedString(home.welcomeHeading, 160) && isLimitedString(home.welcomeText, 2_000) && isSafeLink(home.companyVideoUrl)
-    && isLimitedString(award.name, 120) && isLimitedString(award.month, 80) && isLimitedString(award.heading, 160) && isLimitedString(award.category, 160) && isSafeLink(award.imageUrl) && isLimitedString(award.imagePosition, 40)
+    && isLimitedString(award.name, 120) && isLimitedString(award.month, 80) && isLimitedString(award.heading, 160) && isLimitedString(award.category, 160) && isSafeLink(award.imageUrl) && isLimitedString(award.imagePosition, 40) && (award.imageScale === undefined || (typeof award.imageScale === "number" && Number.isFinite(award.imageScale) && award.imageScale >= 50 && award.imageScale <= 180))
     && Array.isArray(people.prestige) && people.prestige.length <= 100 && people.prestige.every(isPerson)
     && Array.isArray(people.elite) && people.elite.length <= 100 && people.elite.every(isPerson)
     && Array.isArray(infoHub.cards) && infoHub.cards.length <= 50 && infoHub.cards.every((card) => isImageCard(card))

@@ -278,7 +278,7 @@ export function OurPeople({ award, people }: { readonly award: CmsContent["award
   return (
     <div className="content-stack people-page">
       <section className="winner">
-        <img src={award?.imageUrl ?? "/images/agent-of-the-month.png"} alt={award?.name ?? "Jason Yang"} style={{ objectPosition: award?.imagePosition ?? "right bottom" }} />
+        <img src={award?.imageUrl ?? "/images/agent-of-the-month.png"} alt={award?.name ?? "Jason Yang"} style={{ objectPosition: award?.imagePosition ?? "right bottom", transform: `scale(${(award?.imageScale ?? 100) / 100})` }} />
         <div><div className="award-stars" aria-hidden="true">★ <span>★</span> ★</div><h1>AGENT OF<br />THE MONTH</h1><p className="award-month">{award?.month ?? "AUGUST 2026"}</p><div className="award-rule" /><h2>{award?.heading ?? "SALES AGENT OF THE MONTH"}</h2><p className="award-category">{award?.category ?? "BY SETTLED COMMISSIONS"}</p><strong className="award-name">{award?.name ?? "JASON YANG"}</strong></div>
       </section>
       <PeopleGroup title="MEET OUR PRESTIGE AGENTS" people={people.prestige} />

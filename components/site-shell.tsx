@@ -151,7 +151,6 @@ export function SiteShell({ children, currentUser, isLocalPreview = false, annou
               <p>EXPLORE NGU</p>
               <Navigation onNavigate={() => setDrawerOpen(false)} />
               {drawerContacts}
-              {(isLocalPreview || canEdit) && <Link className="drawer-editor-link" href="/editor" onClick={() => setDrawerOpen(false)}>Open Hub Editor <span aria-hidden="true">↗</span></Link>}
               <SessionControls isLocalPreview={isLocalPreview} canEdit={canEdit} user={currentUser} />
             </div>
           </aside>
