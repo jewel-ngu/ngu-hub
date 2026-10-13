@@ -4,6 +4,7 @@ import type { CmsContent } from "@/lib/cms-types";
 type AwardDisplayProps = {
   readonly award: CmsContent["award"];
   readonly interactive?: boolean;
+  readonly showMobileGuide?: boolean;
   readonly personRef?: Ref<HTMLDivElement>;
   readonly onMoveStart?: PointerEventHandler<HTMLImageElement>;
   readonly onMove?: PointerEventHandler<HTMLImageElement>;
@@ -19,7 +20,7 @@ type AwardPersonStyle = CSSProperties & {
   readonly "--award-image-scale": number;
 };
 
-export function AwardDisplay({ award, interactive = false, personRef, onMoveStart, onMove, onMoveEnd, onResizeStart, onResize, onResizeEnd }: AwardDisplayProps): ReactNode {
+export function AwardDisplay({ award, interactive = false, showMobileGuide = false, personRef, onMoveStart, onMove, onMoveEnd, onResizeStart, onResize, onResizeEnd }: AwardDisplayProps): ReactNode {
   const personStyle: AwardPersonStyle = {
     "--award-image-x": `${award.imageOffsetX ?? 0}%`,
     "--award-image-y": `${award.imageOffsetY ?? 0}%`,
@@ -61,6 +62,7 @@ export function AwardDisplay({ award, interactive = false, personRef, onMoveStar
         <p className="award-category">{award.category}</p>
         <strong className="award-name">{award.name}</strong>
       </div>
+      {showMobileGuide && <div className="award-mobile-safe-guide" aria-hidden="true"><span>Mobile image safe area</span></div>}
     </section>
   );
 }
