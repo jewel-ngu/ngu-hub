@@ -1,8 +1,9 @@
 "use client";
 
 import { upload } from "@vercel/blob/client";
-import { ArrowDown, ArrowUp, Check, ExternalLink, Plus, Save, Send, Trash2, Upload, UserPlus } from "lucide-react";
-import { useMemo, useState, type ChangeEvent, type ReactNode } from "react";
+import { ArrowDown, ArrowUp, Check, ExternalLink, Plus, RotateCcw, Save, Send, Trash2, Upload, UserPlus } from "lucide-react";
+import { useMemo, useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { AwardDisplay } from "@/components/award-display";
 import type { CmsState } from "@/lib/cms-store";
 import { EDITABLE_PAGE_KEYS, type CmsContent, type EditableImageCard, type EditablePageKey, type EditablePerson } from "@/lib/cms-types";
 import type { EditorIdentity } from "@/lib/editor-access";
@@ -118,6 +119,105 @@ function ImageCardEditor({ title, cards, includeCategory = false, onChange }: { 
   return <section className="editor-card"><div className="editor-card-heading"><div><p className="eyebrow">IMAGE CARDS</p><h2>{title}</h2></div><button type="button" onClick={() => { onChange([...cards, { id: `card-${Date.now()}`, title: "New card", description: "", href: "/", imageUrl: "/images/work-apps-hero.png", imagePosition: "50% 50%", ...(includeCategory ? { category: "Resource" } : {}) }]); setExpanded(cards.length); }}><Plus size={16} /> Add card</button></div><div className="editor-video-list">{cards.map((card, index) => <article key={card.id}><button className="editor-video-summary" type="button" onClick={() => setExpanded(expanded === index ? null : index)}><span>{index + 1}</span><strong>{card.title}</strong><small>{card.href}</small></button>{expanded === index && <div className="editor-video-fields">{includeCategory && <Field label="Category"><input value={card.category ?? ""} onChange={(event) => update(index, "category", event.target.value)} /></Field>}<Field label="Title"><input value={card.title} onChange={(event) => update(index, "title", event.target.value)} /></Field><Field label="Description"><textarea rows={3} value={card.description} onChange={(event) => update(index, "description", event.target.value)} /></Field><Field label="Link"><input value={card.href} onChange={(event) => update(index, "href", event.target.value)} /></Field><UploadField label="Card image" value={card.imageUrl} accept="image/jpeg,image/png,image/webp,image/gif" onChange={(value) => update(index, "imageUrl", value)} /><Field label="Image position"><input value={card.imagePosition} onChange={(event) => update(index, "imagePosition", event.target.value)} /></Field><div className="editor-image-preview editor-card-preview" style={{ backgroundImage: `url('${card.imageUrl}')`, backgroundPosition: card.imagePosition }}><span>{card.title}</span></div><div className="editor-row-actions"><button type="button" disabled={index === 0} onClick={() => { onChange(moveItem(cards, index, -1)); setExpanded(index - 1); }}><ArrowUp size={15} /> Move up</button><button type="button" disabled={index === cards.length - 1} onClick={() => { onChange(moveItem(cards, index, 1)); setExpanded(index + 1); }}><ArrowDown size={15} /> Move down</button><button className="danger" type="button" onClick={() => onChange(cards.filter((_, cardIndex) => cardIndex !== index))}><Trash2 size={15} /> Remove</button></div></div>}</article>)}</div></section>;
 }
 
+type AwardInteraction = {
+  readonly pointerId: number;
+  readonly mode: "move" | "resize";
+  readonly startClientX: number;
+  readonly startClientY: number;
+  readonly startOffsetX: number;
+  readonly startOffsetY: number;
+  readonly startScale: number;
+  readonly baseWidth: number;
+  readonly baseHeight: number;
+  readonly centerX: number;
+  readonly centerY: number;
+  readonly startDistance: number;
+};
+
+function clamp(value: number, minimum: number, maximum: number): number {
+  return Math.min(Math.max(value, minimum), maximum);
+}
+
+function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"]; readonly onChange: (award: CmsContent["award"]) => void }): ReactNode {
+  const personRef = useRef<HTMLDivElement>(null);
+  const interactionRef = useRef<AwardInteraction | null>(null);
+
+  function beginInteraction(mode: AwardInteraction["mode"], event: ReactPointerEvent<HTMLElement>): void {
+    const person = personRef.current;
+    if (!person) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const rect = person.getBoundingClientRect();
+    const startScale = award.imageScale ?? 100;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    interactionRef.current = {
+      pointerId: event.pointerId,
+      mode,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startOffsetX: award.imageOffsetX ?? 0,
+      startOffsetY: award.imageOffsetY ?? 0,
+      startScale,
+      baseWidth: rect.width / (startScale / 100),
+      baseHeight: rect.height / (startScale / 100),
+      centerX,
+      centerY,
+      startDistance: Math.max(Math.hypot(event.clientX - centerX, event.clientY - centerY), 1),
+    };
+  }
+
+  function updateInteraction(event: ReactPointerEvent<HTMLElement>): void {
+    const interaction = interactionRef.current;
+    if (!interaction || interaction.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    if (interaction.mode === "move") {
+      const imageOffsetX = clamp(interaction.startOffsetX + ((event.clientX - interaction.startClientX) / interaction.baseWidth) * 100, -100, 100);
+      const imageOffsetY = clamp(interaction.startOffsetY + ((event.clientY - interaction.startClientY) / interaction.baseHeight) * 100, -100, 100);
+      onChange({ ...award, imageOffsetX, imageOffsetY });
+      return;
+    }
+    const distance = Math.hypot(event.clientX - interaction.centerX, event.clientY - interaction.centerY);
+    const imageScale = clamp(interaction.startScale * (distance / interaction.startDistance), 50, 180);
+    onChange({ ...award, imageScale });
+  }
+
+  function endInteraction(event: ReactPointerEvent<HTMLElement>): void {
+    if (interactionRef.current?.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    interactionRef.current = null;
+  }
+
+  return (
+    <section className="editor-card editor-award-card">
+      <p className="eyebrow">OUR PEOPLE</p>
+      <h1>Agent of the month</h1>
+      <Field label="Agent name"><input value={award.name} onChange={(event) => onChange({ ...award, name: event.target.value })} /></Field>
+      <Field label="Month"><input value={award.month} onChange={(event) => onChange({ ...award, month: event.target.value })} /></Field>
+      <Field label="Award heading"><input value={award.heading} onChange={(event) => onChange({ ...award, heading: event.target.value })} /></Field>
+      <Field label="Category"><input value={award.category} onChange={(event) => onChange({ ...award, category: event.target.value })} /></Field>
+      <UploadField label="Agent cut-out image" value={award.imageUrl} accept="image/jpeg,image/png,image/webp" onChange={(imageUrl) => onChange({ ...award, imageUrl })} />
+      <div className="editor-award-heading">
+        <div><span>LIVE LAYOUT</span><p>Drag the person to move them. Drag the white corner handle to make them larger or smaller.</p></div>
+        <button type="button" onClick={() => onChange({ ...award, imageOffsetX: 0, imageOffsetY: 0, imageScale: 100 })}><RotateCcw size={15} /> Reset image</button>
+      </div>
+      <div className="editor-award-canvas">
+        <AwardDisplay
+          award={award}
+          interactive
+          personRef={personRef}
+          onMoveStart={(event) => beginInteraction("move", event)}
+          onMove={updateInteraction}
+          onMoveEnd={endInteraction}
+          onResizeStart={(event) => beginInteraction("resize", event)}
+          onResize={updateInteraction}
+          onResizeEnd={endInteraction}
+        />
+      </div>
+    </section>
+  );
+}
+
 export function EditorApp({ editor, initialState, initialEditorEmails }: EditorAppProps): ReactNode {
   const [content, setContent] = useState<CmsContent>(initialState.draft);
   const [section, setSection] = useState<EditorSection>("announcement");
@@ -189,14 +289,14 @@ export function EditorApp({ editor, initialState, initialEditorEmails }: EditorA
       <header className="editor-topbar"><div><img src="/images/ngu-mark.png" alt="NGU Real Estate" /><div><strong>NGU Hub Editor</strong><span>Signed in as {editor.email}</span></div></div><div><a href="/" target="_blank">View live Hub <ExternalLink size={15} /></a><button type="button" onClick={() => void save()} disabled={status === "saving" || status === "publishing"}><Save size={16} /> Save draft</button><button className="editor-publish" type="button" onClick={() => void publish()} disabled={status === "saving" || status === "publishing"}><Send size={16} /> Publish</button></div></header>
       <div className="editor-layout">
         <aside className="editor-sidebar"><p>CONTENT</p>{navigation.map((item) => <button className={section === item.key ? "active" : ""} type="button" key={item.key} onClick={() => setSection(item.key)}>{item.label}</button>)}</aside>
-        <section className="editor-workspace">
+        <section className={`editor-workspace${section === "award" ? " editor-workspace-wide" : ""}`}>
           <div className={`editor-status ${status === "error" ? "error" : ""}`}><Check size={16} /><span>{hasChanges && status === "idle" ? "Unsaved changes" : message}</span></div>
           {section === "announcement" && <section className="editor-card"><p className="eyebrow">GLOBAL</p><h1>Announcement banner</h1><p>This appears across the top of every Hub page.</p><Field label="Show banner"><select value={content.announcement.enabled ? "yes" : "no"} onChange={(event) => setContent({ ...content, announcement: { ...content.announcement, enabled: event.target.value === "yes" } })}><option value="yes">Yes</option><option value="no">No</option></select></Field><Field label="Message"><input value={content.announcement.message} onChange={(event) => setContent({ ...content, announcement: { ...content.announcement, message: event.target.value } })} /></Field><Field label="Link label"><input value={content.announcement.linkLabel} onChange={(event) => setContent({ ...content, announcement: { ...content.announcement, linkLabel: event.target.value } })} /></Field><Field label="Link"><input value={content.announcement.href} onChange={(event) => setContent({ ...content, announcement: { ...content.announcement, href: event.target.value } })} /></Field></section>}
           {section === "home" && <section className="editor-card"><p className="eyebrow">HOME PAGE</p><h1>Home content</h1><Field label="Hero kicker"><input value={content.home.kicker} onChange={(event) => setContent({ ...content, home: { ...content.home, kicker: event.target.value } })} /></Field><Field label="Welcome heading"><input value={content.home.welcomeHeading} onChange={(event) => setContent({ ...content, home: { ...content.home, welcomeHeading: event.target.value } })} /></Field><Field label="Welcome text"><textarea rows={6} value={content.home.welcomeText} onChange={(event) => setContent({ ...content, home: { ...content.home, welcomeText: event.target.value } })} /></Field><Field label="Company video URL" hint="YouTube, Google Drive or an uploaded video URL"><input value={content.home.companyVideoUrl} onChange={(event) => setContent({ ...content, home: { ...content.home, companyVideoUrl: event.target.value } })} /></Field></section>}
           {section === "pages" && <section className="editor-card"><p className="eyebrow">ALL PAGES</p><h1>Page headers and hero images</h1><Field label="Choose a page"><select value={selectedPage} onChange={(event) => setSelectedPage(event.target.value as EditablePageKey)}>{EDITABLE_PAGE_KEYS.map((key) => <option value={key} key={key}>{content.pages[key].label}</option>)}</select></Field><Field label="Page title"><input value={page.title} onChange={(event) => setContent({ ...content, pages: { ...content.pages, [selectedPage]: { ...page, title: event.target.value } } })} /></Field><Field label="Subtitle"><textarea rows={3} value={page.subtitle} onChange={(event) => setContent({ ...content, pages: { ...content.pages, [selectedPage]: { ...page, subtitle: event.target.value } } })} /></Field><UploadField label="Hero image" value={page.imageUrl} accept="image/jpeg,image/png,image/webp,image/gif" onChange={(value) => setContent({ ...content, pages: { ...content.pages, [selectedPage]: { ...page, imageUrl: value } } })} /><Field label="Image position" hint="Examples: 50% 50%, center top, right bottom"><input value={page.imagePosition} onChange={(event) => setContent({ ...content, pages: { ...content.pages, [selectedPage]: { ...page, imagePosition: event.target.value } } })} /></Field><div className="editor-image-preview" style={{ backgroundImage: `url('${page.imageUrl}')`, backgroundPosition: page.imagePosition }}><span>Image preview</span></div></section>}
           {section === "people" && <div className="editor-training"><div className="editor-page-heading"><p className="eyebrow">OUR PEOPLE</p><h1>Prestige &amp; Elite agents</h1><p>Change photos and roles, reorder agents, or move an agent to the other achievement group.</p></div><PeopleGroupEditor title="Prestige agents" group={content.people.prestige} otherGroupLabel="Elite" onChange={(prestige) => setContent({ ...content, people: { ...content.people, prestige } })} onMoveGroup={(person, index) => setContent({ ...content, people: { prestige: content.people.prestige.filter((_, personIndex) => personIndex !== index), elite: [...content.people.elite, person] } })} /><PeopleGroupEditor title="Elite agents" group={content.people.elite} otherGroupLabel="Prestige" onChange={(elite) => setContent({ ...content, people: { ...content.people, elite } })} onMoveGroup={(person, index) => setContent({ ...content, people: { prestige: [...content.people.prestige, person], elite: content.people.elite.filter((_, personIndex) => personIndex !== index) } })} /></div>}
           {section === "info-hub" && <div className="editor-training"><div className="editor-page-heading"><p className="eyebrow">INFO HUB</p><h1>Info Hub image cards</h1><p>Change the image, text, destination and order of cards such as Rex Training.</p></div><ImageCardEditor title="Hub pages" cards={content.infoHub.cards} onChange={(cards) => setContent({ ...content, infoHub: { ...content.infoHub, cards: cards.map(({ id, title, description, href, imageUrl, imagePosition }) => ({ id, title, description, href, imageUrl, imagePosition })) } })} /><ImageCardEditor title="Marketing request cards" cards={content.infoHub.requests} includeCategory onChange={(requests) => setContent({ ...content, infoHub: { ...content.infoHub, requests: requests.map(({ id, title, description, href, imageUrl, imagePosition, category }) => ({ id, title, description, href, imageUrl, imagePosition, category: category ?? "Resource" })) } })} /></div>}
-          {section === "award" && <section className="editor-card"><p className="eyebrow">OUR PEOPLE</p><h1>Agent of the month</h1><Field label="Agent name"><input value={content.award.name} onChange={(event) => setContent({ ...content, award: { ...content.award, name: event.target.value } })} /></Field><Field label="Month"><input value={content.award.month} onChange={(event) => setContent({ ...content, award: { ...content.award, month: event.target.value } })} /></Field><Field label="Award heading"><input value={content.award.heading} onChange={(event) => setContent({ ...content, award: { ...content.award, heading: event.target.value } })} /></Field><Field label="Category"><input value={content.award.category} onChange={(event) => setContent({ ...content, award: { ...content.award, category: event.target.value } })} /></Field><UploadField label="Agent cut-out image" value={content.award.imageUrl} accept="image/jpeg,image/png,image/webp" onChange={(value) => setContent({ ...content, award: { ...content.award, imageUrl: value } })} /><Field label="Image position" hint="Examples: right bottom, center bottom, 70% 100%"><input value={content.award.imagePosition} onChange={(event) => setContent({ ...content, award: { ...content.award, imagePosition: event.target.value } })} /></Field><Field label={`Image size (${content.award.imageScale ?? 100}%)`} hint="Drag the slider to make the person larger or smaller"><input type="range" min="50" max="180" step="5" value={content.award.imageScale ?? 100} onChange={(event) => setContent({ ...content, award: { ...content.award, imageScale: Number(event.target.value) } })} /></Field><div className="editor-award-preview"><img src={content.award.imageUrl} alt="Agent cut-out preview" style={{ objectPosition: content.award.imagePosition, transform: `scale(${(content.award.imageScale ?? 100) / 100})` }} /><span>Live size preview</span></div></section>}
+          {section === "award" && <AwardEditor award={content.award} onChange={(award) => setContent({ ...content, award })} />}
           {section === "training" && <div className="editor-training"><div className="editor-page-heading"><p className="eyebrow">WEEKLY UPDATES</p><h1>Training videos</h1><p>Add a Google Drive or YouTube link, or upload a video directly. New entries can be moved into the correct order before publishing.</p></div><TrainingEditor title="Sales training" videos={content.training.sales} onChange={(sales) => setContent({ ...content, training: { ...content.training, sales } })} /><TrainingEditor title="Rex training" videos={content.training.rex} onChange={(rex) => setContent({ ...content, training: { ...content.training, rex } })} /></div>}
           {section === "access" && <section className="editor-card editor-access-card"><p className="eyebrow">SECURITY</p><h1>Editor access</h1><p>Add or remove the people who can open this editor. They must sign in with an approved NGU Google Workspace account.</p><div className="editor-access-notice">{accessMessage}</div><div className="editor-access-add"><Field label="New editor email" hint="Allowed domains: @ngurealestate.com.au, @nguteam.com and @ngugroup.com"><input type="email" value={newEditorEmail} onChange={(event) => setNewEditorEmail(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void addEditor(); } }} placeholder="name@ngurealestate.com.au" /></Field><button type="button" disabled={accessSaving} onClick={() => void addEditor()}><UserPlus size={16} /> Add editor</button></div><div className="editor-access-list">{editorEmails.map((email) => { const isCurrentEditor = email === editor.email.toLowerCase(); return <div key={email}><span><strong>{email}</strong>{isCurrentEditor && <small>YOU</small>}</span><button className="danger" type="button" disabled={accessSaving || isCurrentEditor || editorEmails.length === 1} title={isCurrentEditor ? "Another editor must remove your access" : editorEmails.length === 1 ? "At least one editor is required" : "Remove editor access"} onClick={() => void removeEditor(email)}><Trash2 size={15} /> Remove</button></div>; })}</div></section>}
         </section>

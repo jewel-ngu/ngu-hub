@@ -1,6 +1,7 @@
 import { ArrowRight, CalendarDays, ExternalLink, FileText, Mail, PlayCircle, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { AwardDisplay } from "@/components/award-display";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { StageChecklist } from "@/components/stage-checklist";
 import { TrainingPlaylist } from "@/components/training-playlist";
@@ -277,10 +278,7 @@ export function AmlCtf(): ReactNode {
 export function OurPeople({ award, people }: { readonly award: CmsContent["award"]; readonly people: CmsContent["people"] }): ReactNode {
   return (
     <div className="content-stack people-page">
-      <section className="winner">
-        <img src={award?.imageUrl ?? "/images/agent-of-the-month.png"} alt={award?.name ?? "Jason Yang"} style={{ objectPosition: award?.imagePosition ?? "right bottom", transform: `scale(${(award?.imageScale ?? 100) / 100})` }} />
-        <div><div className="award-stars" aria-hidden="true">★ <span>★</span> ★</div><h1>AGENT OF<br />THE MONTH</h1><p className="award-month">{award?.month ?? "AUGUST 2026"}</p><div className="award-rule" /><h2>{award?.heading ?? "SALES AGENT OF THE MONTH"}</h2><p className="award-category">{award?.category ?? "BY SETTLED COMMISSIONS"}</p><strong className="award-name">{award?.name ?? "JASON YANG"}</strong></div>
-      </section>
+      <AwardDisplay award={award} />
       <PeopleGroup title="MEET OUR PRESTIGE AGENTS" people={people.prestige} />
       <PeopleGroup title="MEET OUR ELITE AGENTS" people={people.elite} />
       <LiveDirectory kind="people" />
