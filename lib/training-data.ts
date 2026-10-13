@@ -74,5 +74,11 @@ export function getTrainingEmbedUrl(href: string): string {
   if (driveMatch?.[1]) return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
   const youtubeMatch = href.match(/youtu\.be\/([^?]+)/);
   if (youtubeMatch?.[1]) return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  const youtubeWatchMatch = href.match(/[?&]v=([^&]+)/);
+  if (youtubeWatchMatch?.[1]) return `https://www.youtube.com/embed/${youtubeWatchMatch[1]}`;
   return href;
+}
+
+export function isDirectVideoUrl(href: string): boolean {
+  return /\.(mp4|webm|mov)(\?|$)/i.test(href) || href.startsWith("/api/media?");
 }

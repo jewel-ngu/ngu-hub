@@ -5,14 +5,16 @@ type HeroProps = {
   readonly subtitle?: string;
   readonly home?: boolean;
   readonly image?: string;
+  readonly imagePosition?: string;
+  readonly kicker?: string;
 };
 
 const homeImage = "/images/home-city-v2.png";
 const homeVideo = "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/NGU+HUB+Updated+Video_V2.mov";
 
-export function Hero({ title, subtitle, home = false, image }: HeroProps): ReactNode {
+export function Hero({ title, subtitle, home = false, image, imagePosition = "50% 50%", kicker }: HeroProps): ReactNode {
   const background = image ?? (home ? homeImage : "/images/work-apps-hero.png");
-  const style = { "--hero-image": `url('${background}')` } as CSSProperties;
+  const style = { "--hero-image": `url('${background}')`, "--hero-position": imagePosition } as CSSProperties;
 
   return (
     <section className={`page-hero ${home ? "home-hero" : ""}`} style={style}>
@@ -29,7 +31,7 @@ export function Hero({ title, subtitle, home = false, image }: HeroProps): React
       )}
       <div className="hero-overlay" />
       <div className="hero-copy">
-        <span className="hero-kicker">{home ? "CONNECTED BY AMBITION." : "NGU REAL ESTATE · THE HUB"}</span>
+        <span className="hero-kicker">{kicker ?? (home ? "CONNECTED BY AMBITION." : "NGU REAL ESTATE · THE HUB")}</span>
         <h1>{title}</h1>
         {subtitle && <p>{subtitle}</p>}
       </div>

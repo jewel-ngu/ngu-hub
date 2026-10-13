@@ -2,11 +2,11 @@
 
 This document maps the private website hierarchy and the Next.js files that render it.
 
-## Live directories and monthly award
+## Live directories, editor, and monthly award
 
 The Our People and Trusted Network directories use `components/live-directory.tsx` and the read-only `/api/directory` endpoint. Google Sheets remains the source of truth. Tabs are discovered from the existing sheet, refreshed every five minutes, and rendered as native searchable tables. Supplier hyperlinks are preserved. Employment dates, internal staff groups, and labelled access credentials are not returned to the browser. No sheet permissions are changed. If Google removes anonymous read access, the view shows an error and a source-sheet link; authenticated Google access would then need separate setup.
 
-The monthly award is currently maintained in `OurPeople` in `components/content.tsx`. An admin editor is not implemented, pending approval. A production editor still needs an administrator allowlist, persistent award records and image storage, with preview/publish controls.
+The restricted `/editor` is available only to its stored email allowlist, seeded with Jewel, Claire, and Edgar. Existing editors can manage that list from the Editor access screen; changes apply immediately, require an approved NGU Workspace domain, retain at least one editor, and prevent an editor from removing their own access. It stores independent draft and published documents in Neon Postgres when `DATABASE_URL` is configured, otherwise in the private Vercel Blob store used by production. Local development uses SQLite. Every publish records a revision. Uploaded images and videos also use private Vercel Blob storage and are streamed to signed-in NGU users through `/api/media`; private training material is never exposed by a public Blob URL. The editor controls the announcement banner, home copy, every page hero, the monthly award, Prestige and Elite agent cards and ordering, Info Hub image cards, and the Sales/Rex training playlists. Google and YouTube links can be used instead of uploads.
 
 The homepage video is served locally from `public/ngu-home.mov` (the supplied 39.5-second original), instead of Google's download-warning response. It autoplays muted, loops, and has no visible controls. Before a production deployment, transcode the 218 MB source to a smaller web-optimized MP4 and update `components/hero.tsx`.
 
@@ -95,6 +95,9 @@ flowchart LR
 
 - Local development can use `LOCAL_DEV_ACCESS=true` to preview the protected Hub without Google OAuth or local Google credentials. The bypass is accepted only while `NODE_ENV=development` and `BETTER_AUTH_URL` points to `localhost`, `127.0.0.1`, or `[::1]`; Vercel production always requires its real Google credentials.
 - `app/(protected)/layout.tsx` verifies the Better Auth session before applying the shared `SiteShell` to every Hub route. Google Workspace identities are limited to the `ngurealestate.com.au`, `nguteam.com`, and `ngugroup.com` domains, and sessions are stored in encrypted cookies.
+- `/editor` performs a second exact-email authorization check against the stored editor list. The same check runs inside every access, draft, publish, and upload endpoint; hiding the editor link is not treated as a security boundary.
+- Published content is read by the Hub. Saving writes only the private draft; publishing snapshots that draft in `cms_revisions` before promoting it. Local development uses an ignored SQLite file, while Vercel uses the attached Neon database.
+- Uploaded media is stored in a private Vercel Blob store. `/api/media` verifies an NGU session before streaming it, including byte-range requests used by the video player.
 - `app/(protected)/page.tsx` owns the bespoke home-page sections and loads upcoming events.
 - `app/(protected)/[...slug]/page.tsx` converts the URL segments to a route key, rejects unknown routes with `notFound()`, and selects either data-driven content or a specialised component.
 - `app/api/directory/route.ts` verifies the same server-side session before returning live directory data.

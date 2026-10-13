@@ -4,11 +4,13 @@ import type { ReactNode } from "react";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { StageChecklist } from "@/components/stage-checklist";
 import { TrainingPlaylist } from "@/components/training-playlist";
-import { appGroups, people, type SimplePage } from "@/lib/site-data";
+import { appGroups, type SimplePage } from "@/lib/site-data";
 import { supportContacts } from "@/lib/support-contacts";
 import { officeDetails } from "@/lib/office-details";
 import { LiveDirectory } from "@/components/live-directory";
 import { rexTrainingVideos, salesTrainingVideos } from "@/lib/training-data";
+import type { CmsContent } from "@/lib/cms-types";
+import type { TrainingVideo } from "@/lib/training-data";
 
 export function SectionHeading({ children }: { readonly children: ReactNode }): ReactNode {
   return <h2 className="section-heading">{children}</h2>;
@@ -128,7 +130,7 @@ export function WorkApps(): ReactNode {
   );
 }
 
-export function InfoHub(): ReactNode {
+export function InfoHub({ content }: { readonly content: CmsContent["infoHub"] }): ReactNode {
   const contacts = supportContacts;
 
   return (
@@ -136,12 +138,7 @@ export function InfoHub(): ReactNode {
       <section className="hub-feature-section">
         <p className="eyebrow">EXPLORE THE HUB</p>
         <div className="hub-image-grid">
-          <ImageLinkCard title="Pre-List" description="Prepare for a strong appraisal and listing." href="/info-hub/agent-toolkit/pre-list" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/-.png" />
-          <ImageLinkCard title="Pre-Sale" description="Set up every campaign for success." href="/info-hub/agent-toolkit/pre-sale" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/socialmedia.png" />
-          <ImageLinkCard title="Open Home" description="Present, capture and follow up." href="/info-hub/agent-toolkit/open-home" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/blogpost.png" />
-          <ImageLinkCard title="Welcome Pack" description="Everything you need for your first weeks at NGU." href="/info-hub/welcome-pack" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/DSC01401.jpg" />
-          <ImageLinkCard title="Sales Training" description="Training resources for agents and sales teams." href="/info-hub/sales-training" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/DSC00291.jpg" />
-          <ImageLinkCard title="Rex Training" description="Recorded webinars to help you get more from Rex." href="/info-hub/rex-training" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/DSC01401.jpg" />
+          {content.cards.map((card) => <ImageLinkCard key={card.id} title={card.title} description={card.description} href={card.href} image={card.imageUrl} imagePosition={card.imagePosition} />)}
         </div>
       </section>
 
@@ -151,8 +148,7 @@ export function InfoHub(): ReactNode {
           <h2>Ready when you are.</h2>
         </div>
         <div className="request-grid">
-          <RequestCard title="Social Media Post" category="Marketing" description="Request your listing or achievement to be featured on Instagram and Facebook." href="https://form.jotform.com/251597367345064" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/socialmedia.png" />
-          <RequestCard title="Blog Post Request" category="Content" description="Have a topic or suggestion for our weekly blog? Send it to the content team for review." href="https://form.jotform.com/251631287914864" image="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/blogpost.png" />
+          {content.requests.map((card) => <RequestCard key={card.id} title={card.title} category={card.category} description={card.description} href={card.href} image={card.imageUrl} imagePosition={card.imagePosition} />)}
         </div>
       </section>
 
@@ -166,21 +162,22 @@ type ImageLinkCardProps = {
   readonly description: string;
   readonly href: string;
   readonly image: string;
+  readonly imagePosition: string;
 };
 
-function ImageLinkCard({ title, description, href, image }: ImageLinkCardProps): ReactNode {
+function ImageLinkCard({ title, description, href, image, imagePosition }: ImageLinkCardProps): ReactNode {
   return (
     <Link className="hub-image-card" href={href}>
-      <img src={image} alt="" />
+      <img src={image} alt="" style={{ objectPosition: imagePosition }} />
       <div><h2>{title}</h2><p>{description}</p><ArrowRight /></div>
     </Link>
   );
 }
 
-function RequestCard({ title, category, description, href, image }: ImageLinkCardProps & { readonly category: string }): ReactNode {
+function RequestCard({ title, category, description, href, image, imagePosition }: ImageLinkCardProps & { readonly category: string }): ReactNode {
   return (
     <a className="request-card" href={href} target="_blank" rel="noreferrer">
-      <img src={image} alt="" />
+      <img src={image} alt="" style={{ objectPosition: imagePosition }} />
       <div><span>{category}</span><h3>{title}</h3><p>{description}</p><strong>Submit request <ArrowRight size={17} /></strong></div>
     </a>
   );
@@ -277,27 +274,25 @@ export function AmlCtf(): ReactNode {
   );
 }
 
-export function OurPeople(): ReactNode {
-  const prestigeRoles = ["Chairman of NGU Real Estate", "Principal · NGU Ipswich", "Principal · NGU Ripley & Surrounds", "Principals · NGU Ipswich Karalee", "Co-Principal · NGU Toowoomba", "Principal · NGU South East", "Principal · NGU Logan", "Principal · NGU Lifestyle", "Principal · NGU Ipswich Central", "Principal · NGU Booval", "Principal · NGU Brisbane West", "Principal · The Jason Yang Group", "Principal · NGU Bundaberg", "Agent · NGU Brisbane", "Agent · NGU Springfield"] as const;
-  const eliteRoles = ["Principal · NGU Toowoomba", "Agent · NGU Karalee", "Agent · NGU Karalee", "Agent · NGU Ripley & Surrounds", "Agent · NGU Ripley & Surrounds", "Agent · NGU Booval", "Sales & Marketing Specialist · NGU Logan", "Agent · NGU Ripley & Surrounds"] as const;
+export function OurPeople({ award, people }: { readonly award: CmsContent["award"]; readonly people: CmsContent["people"] }): ReactNode {
   return (
     <div className="content-stack people-page">
       <section className="winner">
-        <img src="/images/agent-of-the-month.png" alt="Jason Yang" />
-        <div><div className="award-stars" aria-hidden="true">★ <span>★</span> ★</div><h1>AGENT OF<br />THE MONTH</h1><p className="award-month">AUGUST 2026</p><div className="award-rule" /><h2>SALES AGENT<br />OF THE MONTH</h2><p className="award-category">BY SETTLED COMMISSIONS</p><strong className="award-name">JASON YANG</strong></div>
+        <img src={award?.imageUrl ?? "/images/agent-of-the-month.png"} alt={award?.name ?? "Jason Yang"} style={{ objectPosition: award?.imagePosition ?? "right bottom" }} />
+        <div><div className="award-stars" aria-hidden="true">★ <span>★</span> ★</div><h1>AGENT OF<br />THE MONTH</h1><p className="award-month">{award?.month ?? "AUGUST 2026"}</p><div className="award-rule" /><h2>{award?.heading ?? "SALES AGENT OF THE MONTH"}</h2><p className="award-category">{award?.category ?? "BY SETTLED COMMISSIONS"}</p><strong className="award-name">{award?.name ?? "JASON YANG"}</strong></div>
       </section>
-      <PeopleGroup title="MEET OUR PRESTIGE AGENTS" names={people.prestige} roles={prestigeRoles} />
-      <PeopleGroup title="MEET OUR ELITE AGENTS" names={people.elite} roles={eliteRoles} />
+      <PeopleGroup title="MEET OUR PRESTIGE AGENTS" people={people.prestige} />
+      <PeopleGroup title="MEET OUR ELITE AGENTS" people={people.elite} />
       <LiveDirectory kind="people" />
     </div>
   );
 }
 
-function PeopleGroup({ title, names, roles }: { readonly title: string; readonly names: readonly string[]; readonly roles: readonly string[] }): ReactNode {
+function PeopleGroup({ title, people }: { readonly title: string; readonly people: CmsContent["people"]["prestige"] }): ReactNode {
   return (
     <section className="content-section">
       <SectionHeading>{title}</SectionHeading>
-      <div className="people-grid">{names.map((name, index) => <article key={name}><img src={`/images/person-${index + (title.includes("PRESTIGE") ? 6 : 22)}.png`} alt={name} loading="lazy" /><h3>{name}</h3><p>{roles[index] ?? "NGU Agent"}</p></article>)}</div>
+      <div className="people-grid">{people.map((person) => <article key={person.id}><img src={person.imageUrl} alt={person.name} loading="lazy" style={{ objectPosition: person.imagePosition }} /><h3>{person.name}</h3><p>{person.role}</p></article>)}</div>
     </section>
   );
 }
@@ -405,8 +400,8 @@ export function ToolkitStage({ stage }: { readonly stage: ToolkitStageName }): R
   );
 }
 
-export function TrainingList({ type }: { readonly type: "sales" | "rex" }): ReactNode {
-  return <TrainingPlaylist videos={type === "sales" ? salesTrainingVideos : rexTrainingVideos} label={type === "sales" ? "Sales training" : "Rex training"} />;
+export function TrainingList({ type, videos }: { readonly type: "sales" | "rex"; readonly videos?: readonly TrainingVideo[] }): ReactNode {
+  return <TrainingPlaylist videos={videos ?? (type === "sales" ? salesTrainingVideos : rexTrainingVideos)} label={type === "sales" ? "Sales training" : "Rex training"} />;
 }
 
 const welcomeResources = [

@@ -2,7 +2,7 @@
 
 import { ExternalLink, Play } from "lucide-react";
 import { useState, type ReactNode } from "react";
-import { getTrainingEmbedUrl, type TrainingVideo } from "@/lib/training-data";
+import { getTrainingEmbedUrl, isDirectVideoUrl, type TrainingVideo } from "@/lib/training-data";
 
 export function TrainingPlaylist({ videos, label }: { readonly videos: readonly TrainingVideo[]; readonly label: string }): ReactNode {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -13,7 +13,7 @@ export function TrainingPlaylist({ videos, label }: { readonly videos: readonly 
     <section className="training-playlist">
       <div className="playlist-player">
         <div className="playlist-frame">
-          <iframe src={getTrainingEmbedUrl(selected.href)} title={selected.title} allow="autoplay; fullscreen" allowFullScreen />
+          {isDirectVideoUrl(selected.href) ? <video src={selected.href} title={selected.title} controls playsInline /> : <iframe src={getTrainingEmbedUrl(selected.href)} title={selected.title} allow="autoplay; fullscreen" allowFullScreen />}
         </div>
         <div className="playlist-now-playing">
           <p className="eyebrow">NOW PLAYING · {label}</p>

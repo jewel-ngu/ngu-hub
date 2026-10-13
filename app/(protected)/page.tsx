@@ -8,8 +8,11 @@ import { LinkCard, SectionHeading } from "@/components/content";
 import { EventShowcase } from "@/components/event-showcase";
 import { CALENDAR_URL } from "@/lib/calendar-config";
 import { getCalendarEvents } from "@/lib/calendar";
+import { getPublishedContent } from "@/lib/cms-store";
 
 export default async function Home(): Promise<ReactNode> {
+  const content = await getPublishedContent();
+  const homePage = content.pages.home;
   const now = new Date();
   const initialNow = now.toISOString();
   const calendarStart = new Date(now.getTime() - 31 * 24 * 60 * 60 * 1000);
@@ -25,7 +28,7 @@ export default async function Home(): Promise<ReactNode> {
 
   return (
     <>
-      <Hero title="Everything NGU." subtitle="Resources, tools, people and what’s happening next — all in one place." home />
+      <Hero title={homePage.title} subtitle={homePage.subtitle} image={homePage.imageUrl} imagePosition={homePage.imagePosition} kicker={content.home.kicker} home />
 
       <EventShowcase events={upcomingEvents} initialNow={initialNow} />
 
@@ -40,11 +43,11 @@ export default async function Home(): Promise<ReactNode> {
       </section>
 
       <section className="welcome-section">
-        <SectionHeading>WELCOME TO NGU REAL ESTATE</SectionHeading>
-        <p>NGU Real Estate is one of Queensland&apos;s fastest-growing independent real estate groups. Whether you&apos;re new to the team or a long-standing member, this Hub is your go-to for tools, resources, contacts, and company updates — everything you need in one place.</p>
+        <SectionHeading>{content.home.welcomeHeading}</SectionHeading>
+        <p>{content.home.welcomeText}</p>
       </section>
 
-      <CompanyVideo />
+      <CompanyVideo url={content.home.companyVideoUrl} />
 
       <section className="live-calendar" id="ngu-calendar">
         <div className="live-calendar-heading">

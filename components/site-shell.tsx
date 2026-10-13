@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { SessionControls } from "@/components/session-controls";
 import { infoNavItems, navItems } from "@/lib/site-data";
+import type { CmsContent } from "@/lib/cms-types";
 
 type SiteShellProps = {
   readonly children: ReactNode;
@@ -14,6 +15,8 @@ type SiteShellProps = {
     readonly name: string;
   };
   readonly isLocalPreview?: boolean;
+  readonly announcement: CmsContent["announcement"];
+  readonly canEdit?: boolean;
 };
 
 function Brand(): ReactNode {
@@ -84,7 +87,7 @@ function PrimaryNavigation(): ReactNode {
   );
 }
 
-export function SiteShell({ children, currentUser, isLocalPreview = false }: SiteShellProps): ReactNode {
+export function SiteShell({ children, currentUser, isLocalPreview = false, announcement, canEdit = false }: SiteShellProps): ReactNode {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -117,11 +120,11 @@ export function SiteShell({ children, currentUser, isLocalPreview = false }: Sit
   );
 
   return (
-    <>
-      <aside className="announcement">
-        <span>Learn more about AML/CTF</span>
-        <Link href="/amlctf">Explore the latest resources <span aria-hidden="true">↗</span></Link>
-      </aside>
+    <div className={announcement.enabled ? "" : "announcement-disabled"}>
+      {announcement.enabled && <aside className="announcement">
+        <span>{announcement.message}</span>
+        <Link href={announcement.href}>{announcement.linkLabel} <span aria-hidden="true">↗</span></Link>
+      </aside>}
 
       <header className="site-header">
         <Brand />
@@ -148,13 +151,14 @@ export function SiteShell({ children, currentUser, isLocalPreview = false }: Sit
               <p>EXPLORE NGU</p>
               <Navigation onNavigate={() => setDrawerOpen(false)} />
               {drawerContacts}
-              <SessionControls isLocalPreview={isLocalPreview} user={currentUser} />
+              {(isLocalPreview || canEdit) && <Link className="drawer-editor-link" href="/editor" onClick={() => setDrawerOpen(false)}>Open Hub Editor <span aria-hidden="true">↗</span></Link>}
+              <SessionControls isLocalPreview={isLocalPreview} canEdit={canEdit} user={currentUser} />
             </div>
           </aside>
         </div>
       )}
 
       <main className="site-main">{children}</main>
-    </>
+    </div>
   );
 }
