@@ -13,16 +13,22 @@ type AwardDisplayProps = {
 };
 
 type AwardPersonStyle = CSSProperties & {
-  readonly "--award-image-x": string;
-  readonly "--award-image-y": string;
-  readonly "--award-image-scale": number;
+  readonly "--award-desktop-image-x": string;
+  readonly "--award-desktop-image-y": string;
+  readonly "--award-desktop-image-scale": number;
+  readonly "--award-mobile-image-x": string;
+  readonly "--award-mobile-image-y": string;
+  readonly "--award-mobile-image-scale": number;
 };
 
 export function AwardDisplay({ award, interactive = false, showImageFrame = false, personRef, onImageDoubleClick, onMoveStart, onMove, onMoveEnd }: AwardDisplayProps): ReactNode {
   const personStyle: AwardPersonStyle = {
-    "--award-image-x": `${award.imageOffsetX ?? 0}%`,
-    "--award-image-y": `${award.imageOffsetY ?? 0}%`,
-    "--award-image-scale": (award.imageScale ?? 100) / 100,
+    "--award-desktop-image-x": `${award.imageOffsetX ?? 0}%`,
+    "--award-desktop-image-y": `${award.imageOffsetY ?? 0}%`,
+    "--award-desktop-image-scale": (award.imageScale ?? 100) / 100,
+    "--award-mobile-image-x": `${award.mobileImageOffsetX ?? 0}%`,
+    "--award-mobile-image-y": `${award.mobileImageOffsetY ?? 0}%`,
+    "--award-mobile-image-scale": (award.mobileImageScale ?? 100) / 100,
   };
 
   return (

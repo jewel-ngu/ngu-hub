@@ -71,6 +71,9 @@ export type CmsContent = {
     readonly imageScale?: number;
     readonly imageOffsetX?: number;
     readonly imageOffsetY?: number;
+    readonly mobileImageScale?: number;
+    readonly mobileImageOffsetX?: number;
+    readonly mobileImageOffsetY?: number;
   };
   readonly people: {
     readonly prestige: readonly EditablePerson[];
@@ -140,6 +143,9 @@ export const DEFAULT_CMS_CONTENT: CmsContent = {
     imageScale: 100,
     imageOffsetX: 0,
     imageOffsetY: 0,
+    mobileImageScale: 100,
+    mobileImageOffsetX: 0,
+    mobileImageOffsetY: 0,
   },
   people: {
     prestige: peopleGroup(prestigeNames, prestigeRoles, 6),
@@ -212,6 +218,9 @@ export function isCmsContent(value: unknown): value is CmsContent {
     && isLimitedString(award.name, 120) && isLimitedString(award.month, 80) && isLimitedString(award.heading, 160) && isLimitedString(award.category, 160) && isSafeLink(award.imageUrl) && isLimitedString(award.imagePosition, 40) && (award.imageScale === undefined || (typeof award.imageScale === "number" && Number.isFinite(award.imageScale) && award.imageScale >= 50 && award.imageScale <= 180))
     && (award.imageOffsetX === undefined || (typeof award.imageOffsetX === "number" && Number.isFinite(award.imageOffsetX) && award.imageOffsetX >= -100 && award.imageOffsetX <= 100))
     && (award.imageOffsetY === undefined || (typeof award.imageOffsetY === "number" && Number.isFinite(award.imageOffsetY) && award.imageOffsetY >= -100 && award.imageOffsetY <= 100))
+    && (award.mobileImageScale === undefined || (typeof award.mobileImageScale === "number" && Number.isFinite(award.mobileImageScale) && award.mobileImageScale >= 50 && award.mobileImageScale <= 180))
+    && (award.mobileImageOffsetX === undefined || (typeof award.mobileImageOffsetX === "number" && Number.isFinite(award.mobileImageOffsetX) && award.mobileImageOffsetX >= -100 && award.mobileImageOffsetX <= 100))
+    && (award.mobileImageOffsetY === undefined || (typeof award.mobileImageOffsetY === "number" && Number.isFinite(award.mobileImageOffsetY) && award.mobileImageOffsetY >= -100 && award.mobileImageOffsetY <= 100))
     && Array.isArray(people.prestige) && people.prestige.length <= 100 && people.prestige.every(isPerson)
     && Array.isArray(people.elite) && people.elite.length <= 100 && people.elite.every(isPerson)
     && Array.isArray(infoHub.cards) && infoHub.cards.length <= 50 && infoHub.cards.every((card) => isImageCard(card))

@@ -129,6 +129,36 @@ type AwardInteraction = {
   readonly baseHeight: number;
 };
 
+type AwardPreviewMode = "desktop" | "mobile";
+
+type AwardImagePlacement = {
+  readonly scale: number;
+  readonly offsetX: number;
+  readonly offsetY: number;
+};
+
+function getAwardImagePlacement(award: CmsContent["award"], previewMode: AwardPreviewMode): AwardImagePlacement {
+  if (previewMode === "mobile") {
+    return {
+      scale: award.mobileImageScale ?? 100,
+      offsetX: award.mobileImageOffsetX ?? 0,
+      offsetY: award.mobileImageOffsetY ?? 0,
+    };
+  }
+  return {
+    scale: award.imageScale ?? 100,
+    offsetX: award.imageOffsetX ?? 0,
+    offsetY: award.imageOffsetY ?? 0,
+  };
+}
+
+function updateAwardImagePlacement(award: CmsContent["award"], previewMode: AwardPreviewMode, placement: AwardImagePlacement): CmsContent["award"] {
+  if (previewMode === "mobile") {
+    return { ...award, mobileImageScale: placement.scale, mobileImageOffsetX: placement.offsetX, mobileImageOffsetY: placement.offsetY };
+  }
+  return { ...award, imageScale: placement.scale, imageOffsetX: placement.offsetX, imageOffsetY: placement.offsetY };
+}
+
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(Math.max(value, minimum), maximum);
 }
@@ -136,8 +166,9 @@ function clamp(value: number, minimum: number, maximum: number): number {
 function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"]; readonly onChange: (award: CmsContent["award"]) => void }): ReactNode {
   const personRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<AwardInteraction | null>(null);
-  const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">("desktop");
+  const [previewMode, setPreviewMode] = useState<AwardPreviewMode>("desktop");
   const [imageEditing, setImageEditing] = useState(false);
+  const imagePlacement = getAwardImagePlacement(award, previewMode);
 
   function beginInteraction(event: ReactPointerEvent<HTMLElement>): void {
     if (!imageEditing) return;
@@ -150,8 +181,8 @@ function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"];
       pointerId: event.pointerId,
       startClientX: event.clientX,
       startClientY: event.clientY,
-      startOffsetX: award.imageOffsetX ?? 0,
-      startOffsetY: award.imageOffsetY ?? 0,
+      startOffsetX: imagePlacement.offsetX,
+      startOffsetY: imagePlacement.offsetY,
       baseWidth: rect.width,
       baseHeight: rect.height,
     };
@@ -163,7 +194,7 @@ function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"];
     event.preventDefault();
     const imageOffsetX = clamp(interaction.startOffsetX + ((event.clientX - interaction.startClientX) / interaction.baseWidth) * 100, -100, 100);
     const imageOffsetY = clamp(interaction.startOffsetY + ((event.clientY - interaction.startClientY) / interaction.baseHeight) * 100, -100, 100);
-    onChange({ ...award, imageOffsetX, imageOffsetY });
+    onChange(updateAwardImagePlacement(award, previewMode, { ...imagePlacement, offsetX: imageOffsetX, offsetY: imageOffsetY }));
   }
 
   function endInteraction(event: ReactPointerEvent<HTMLElement>): void {
@@ -189,7 +220,7 @@ function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"];
           <button className={previewMode === "desktop" ? "active" : ""} type="button" aria-pressed={previewMode === "desktop"} onClick={() => setPreviewMode("desktop")}><Monitor size={16} /> Desktop</button>
           <button className={previewMode === "mobile" ? "active" : ""} type="button" aria-pressed={previewMode === "mobile"} onClick={() => setPreviewMode("mobile")}><Smartphone size={16} /> Mobile</button>
         </div>
-        {imageEditing ? <div className="editor-image-crop-tools"><label className="editor-award-slider"><span>Image size</span><input aria-label="Agent image size" type="range" min="50" max="180" step="2" value={Math.round(award.imageScale ?? 100)} onChange={(event) => onChange({ ...award, imageScale: Number(event.target.value) })} /><output>{Math.round(award.imageScale ?? 100)}%</output></label><button type="button" onClick={() => onChange({ ...award, imageOffsetX: 0, imageOffsetY: 0, imageScale: 100 })}><RotateCcw size={15} /> Reset</button><button className="editor-crop-done" type="button" onClick={() => setImageEditing(false)}><Check size={16} /> Done</button></div> : <button className="editor-start-crop" type="button" onClick={() => setImageEditing(true)}><Crop size={16} /> Edit image</button>}
+        {imageEditing ? <div className="editor-image-crop-tools"><label className="editor-award-slider"><span>{previewMode === "desktop" ? "Desktop" : "Mobile"} image size</span><input aria-label={`${previewMode === "desktop" ? "Desktop" : "Mobile"} agent image size`} type="range" min="50" max="180" step="2" value={Math.round(imagePlacement.scale)} onChange={(event) => onChange(updateAwardImagePlacement(award, previewMode, { ...imagePlacement, scale: Number(event.target.value) }))} /><output>{Math.round(imagePlacement.scale)}%</output></label><button type="button" onClick={() => onChange(updateAwardImagePlacement(award, previewMode, { scale: 100, offsetX: 0, offsetY: 0 }))}><RotateCcw size={15} /> Reset {previewMode}</button><button className="editor-crop-done" type="button" onClick={() => setImageEditing(false)}><Check size={16} /> Done</button></div> : <button className="editor-start-crop" type="button" onClick={() => setImageEditing(true)}><Crop size={16} /> Edit {previewMode} image</button>}
       </div>
       <div className={`editor-award-canvas editor-award-canvas-${previewMode}`}>
         <AwardDisplay
