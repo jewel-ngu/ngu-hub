@@ -95,7 +95,6 @@ button { font: inherit; }
 .editor-image-crop-tools > button, .editor-start-crop { align-items: center; background: #fff; border: 1px solid #999; cursor: pointer; display: inline-flex; flex: 0 0 auto; gap: 7px; min-height: 40px; padding: 9px 13px; }
 .editor-crop-done { background: #111 !important; border-color: #111 !important; color: #fff; }
 .editor-award-canvas { background: #d9d9d5; border: 1px solid #333; margin-top: 0; overflow: auto; }
-.editor-award-canvas .award-display { min-height: min(62vw,660px); }
 .editor-award-canvas-desktop .award-display { min-width: 800px; }
 .editor-award-canvas-desktop .award-person { height: 94%; right: 3%; width: 55%; }
 .editor-award-canvas-desktop .award-person > img { object-position: right bottom !important; transform: translate(var(--award-desktop-image-x),var(--award-desktop-image-y)) scale(var(--award-desktop-image-scale)); transform-origin: center bottom; }
@@ -147,7 +146,6 @@ button { font: inherit; }
   .editor-image-crop-tools { align-items: stretch; flex-wrap: wrap; justify-content: stretch; }
   .editor-image-crop-tools .editor-award-slider { flex-basis: 100%; }
   .editor-award-slider { grid-template-columns: auto minmax(100px,1fr) 44px; justify-content: stretch; }
-  .editor-award-canvas-desktop .award-display { min-height: 690px; }
   .editor-award-canvas-mobile { padding: 12px; }
   .editor-access-add { grid-template-columns: 1fr; }
   .editor-access-list > div { align-items: flex-start; flex-direction: column; gap: 12px; }
