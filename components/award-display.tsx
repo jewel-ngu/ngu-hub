@@ -1,17 +1,15 @@
-import type { CSSProperties, PointerEventHandler, ReactNode, Ref } from "react";
+import type { CSSProperties, MouseEventHandler, PointerEventHandler, ReactNode, Ref } from "react";
 import type { CmsContent } from "@/lib/cms-types";
 
 type AwardDisplayProps = {
   readonly award: CmsContent["award"];
   readonly interactive?: boolean;
-  readonly showMobileGuide?: boolean;
+  readonly showImageFrame?: boolean;
   readonly personRef?: Ref<HTMLDivElement>;
+  readonly onImageDoubleClick?: MouseEventHandler<HTMLImageElement>;
   readonly onMoveStart?: PointerEventHandler<HTMLImageElement>;
   readonly onMove?: PointerEventHandler<HTMLImageElement>;
   readonly onMoveEnd?: PointerEventHandler<HTMLImageElement>;
-  readonly onResizeStart?: PointerEventHandler<HTMLButtonElement>;
-  readonly onResize?: PointerEventHandler<HTMLButtonElement>;
-  readonly onResizeEnd?: PointerEventHandler<HTMLButtonElement>;
 };
 
 type AwardPersonStyle = CSSProperties & {
@@ -20,7 +18,7 @@ type AwardPersonStyle = CSSProperties & {
   readonly "--award-image-scale": number;
 };
 
-export function AwardDisplay({ award, interactive = false, showMobileGuide = false, personRef, onMoveStart, onMove, onMoveEnd, onResizeStart, onResize, onResizeEnd }: AwardDisplayProps): ReactNode {
+export function AwardDisplay({ award, interactive = false, showImageFrame = false, personRef, onImageDoubleClick, onMoveStart, onMove, onMoveEnd }: AwardDisplayProps): ReactNode {
   const personStyle: AwardPersonStyle = {
     "--award-image-x": `${award.imageOffsetX ?? 0}%`,
     "--award-image-y": `${award.imageOffsetY ?? 0}%`,
@@ -29,29 +27,19 @@ export function AwardDisplay({ award, interactive = false, showMobileGuide = fal
 
   return (
     <section className={`winner award-display${interactive ? " award-display-interactive" : ""}`}>
-      <div ref={personRef} className={`award-person${interactive ? " award-person-editable" : ""}`} style={personStyle}>
+      <div ref={personRef} className={`award-person${showImageFrame ? " award-person-framed" : ""}${interactive ? " award-person-editable" : ""}`} style={personStyle}>
         <img
           src={award.imageUrl}
           alt={award.name}
           draggable={false}
           style={{ objectPosition: award.imagePosition }}
+          onDoubleClick={onImageDoubleClick}
           onPointerDown={onMoveStart}
           onPointerMove={onMove}
           onPointerUp={onMoveEnd}
           onPointerCancel={onMoveEnd}
         />
-        {interactive && (
-          <button
-            className="award-resize-handle"
-            type="button"
-            aria-label="Resize the agent image"
-            title="Drag to resize"
-            onPointerDown={onResizeStart}
-            onPointerMove={onResize}
-            onPointerUp={onResizeEnd}
-            onPointerCancel={onResizeEnd}
-          >↘</button>
-        )}
+        {showImageFrame && <span className="award-frame-label">{interactive ? "Drag image inside frame" : "Double-click image to adjust"}</span>}
       </div>
       <div className="award-copy">
         <div className="award-stars" aria-hidden="true">★ <span>★</span> ★</div>
@@ -62,7 +50,6 @@ export function AwardDisplay({ award, interactive = false, showMobileGuide = fal
         <p className="award-category">{award.category}</p>
         <strong className="award-name">{award.name}</strong>
       </div>
-      {showMobileGuide && <div className="award-mobile-safe-guide" aria-hidden="true"><span>Mobile image safe area</span></div>}
     </section>
   );
 }

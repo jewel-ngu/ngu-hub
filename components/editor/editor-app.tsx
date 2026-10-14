@@ -1,7 +1,7 @@
 "use client";
 
 import { upload } from "@vercel/blob/client";
-import { ArrowDown, ArrowUp, Check, ExternalLink, Monitor, Plus, RotateCcw, Save, Send, Smartphone, Trash2, Upload, UserPlus } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Crop, ExternalLink, Monitor, Plus, RotateCcw, Save, Send, Smartphone, Trash2, Upload, UserPlus } from "lucide-react";
 import { useMemo, useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { AwardDisplay } from "@/components/award-display";
 import type { CmsState } from "@/lib/cms-store";
@@ -121,17 +121,12 @@ function ImageCardEditor({ title, cards, includeCategory = false, onChange }: { 
 
 type AwardInteraction = {
   readonly pointerId: number;
-  readonly mode: "move" | "resize";
   readonly startClientX: number;
   readonly startClientY: number;
   readonly startOffsetX: number;
   readonly startOffsetY: number;
-  readonly startScale: number;
   readonly baseWidth: number;
   readonly baseHeight: number;
-  readonly centerX: number;
-  readonly centerY: number;
-  readonly startDistance: number;
 };
 
 function clamp(value: number, minimum: number, maximum: number): number {
@@ -142,29 +137,23 @@ function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"];
   const personRef = useRef<HTMLDivElement>(null);
   const interactionRef = useRef<AwardInteraction | null>(null);
   const [previewMode, setPreviewMode] = useState<"desktop" | "mobile">("desktop");
+  const [imageEditing, setImageEditing] = useState(false);
 
-  function beginInteraction(mode: AwardInteraction["mode"], event: ReactPointerEvent<HTMLElement>): void {
+  function beginInteraction(event: ReactPointerEvent<HTMLElement>): void {
+    if (!imageEditing) return;
     const person = personRef.current;
     if (!person) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
     const rect = person.getBoundingClientRect();
-    const startScale = award.imageScale ?? 100;
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
     interactionRef.current = {
       pointerId: event.pointerId,
-      mode,
       startClientX: event.clientX,
       startClientY: event.clientY,
       startOffsetX: award.imageOffsetX ?? 0,
       startOffsetY: award.imageOffsetY ?? 0,
-      startScale,
-      baseWidth: rect.width / (startScale / 100),
-      baseHeight: rect.height / (startScale / 100),
-      centerX,
-      centerY,
-      startDistance: Math.max(Math.hypot(event.clientX - centerX, event.clientY - centerY), 1),
+      baseWidth: rect.width,
+      baseHeight: rect.height,
     };
   }
 
@@ -172,15 +161,9 @@ function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"];
     const interaction = interactionRef.current;
     if (!interaction || interaction.pointerId !== event.pointerId) return;
     event.preventDefault();
-    if (interaction.mode === "move") {
-      const imageOffsetX = clamp(interaction.startOffsetX + ((event.clientX - interaction.startClientX) / interaction.baseWidth) * 100, -100, 100);
-      const imageOffsetY = clamp(interaction.startOffsetY + ((event.clientY - interaction.startClientY) / interaction.baseHeight) * 100, -100, 100);
-      onChange({ ...award, imageOffsetX, imageOffsetY });
-      return;
-    }
-    const distance = Math.hypot(event.clientX - interaction.centerX, event.clientY - interaction.centerY);
-    const imageScale = clamp(interaction.startScale * (distance / interaction.startDistance), 50, 180);
-    onChange({ ...award, imageScale });
+    const imageOffsetX = clamp(interaction.startOffsetX + ((event.clientX - interaction.startClientX) / interaction.baseWidth) * 100, -100, 100);
+    const imageOffsetY = clamp(interaction.startOffsetY + ((event.clientY - interaction.startClientY) / interaction.baseHeight) * 100, -100, 100);
+    onChange({ ...award, imageOffsetX, imageOffsetY });
   }
 
   function endInteraction(event: ReactPointerEvent<HTMLElement>): void {
@@ -199,28 +182,25 @@ function AwardEditor({ award, onChange }: { readonly award: CmsContent["award"];
       <Field label="Category"><input value={award.category} onChange={(event) => onChange({ ...award, category: event.target.value })} /></Field>
       <UploadField label="Agent cut-out image" value={award.imageUrl} accept="image/jpeg,image/png,image/webp" onChange={(imageUrl) => onChange({ ...award, imageUrl })} />
       <div className="editor-award-heading">
-        <div><span>LIVE LAYOUT</span><p>Drag the person to move them. Drag the white corner handle to make them larger or smaller.</p></div>
-        <button type="button" onClick={() => onChange({ ...award, imageOffsetX: 0, imageOffsetY: 0, imageScale: 100 })}><RotateCcw size={15} /> Reset image</button>
+        <div><span>LIVE LAYOUT</span><p>{imageEditing ? "Drag the person inside the fixed frame and use the size slider, then click Done." : "Double-click the person to adjust the image inside its fixed responsive frame."}</p></div>
       </div>
       <div className="editor-award-controls">
         <div className="editor-preview-switch" role="group" aria-label="Award preview size">
           <button className={previewMode === "desktop" ? "active" : ""} type="button" aria-pressed={previewMode === "desktop"} onClick={() => setPreviewMode("desktop")}><Monitor size={16} /> Desktop</button>
           <button className={previewMode === "mobile" ? "active" : ""} type="button" aria-pressed={previewMode === "mobile"} onClick={() => setPreviewMode("mobile")}><Smartphone size={16} /> Mobile</button>
         </div>
-        <label className="editor-award-slider"><span>Image size</span><input aria-label="Agent image size" type="range" min="50" max="180" step="2" value={Math.round(award.imageScale ?? 100)} onChange={(event) => onChange({ ...award, imageScale: Number(event.target.value) })} /><output>{Math.round(award.imageScale ?? 100)}%</output></label>
+        {imageEditing ? <div className="editor-image-crop-tools"><label className="editor-award-slider"><span>Image size</span><input aria-label="Agent image size" type="range" min="50" max="180" step="2" value={Math.round(award.imageScale ?? 100)} onChange={(event) => onChange({ ...award, imageScale: Number(event.target.value) })} /><output>{Math.round(award.imageScale ?? 100)}%</output></label><button type="button" onClick={() => onChange({ ...award, imageOffsetX: 0, imageOffsetY: 0, imageScale: 100 })}><RotateCcw size={15} /> Reset</button><button className="editor-crop-done" type="button" onClick={() => setImageEditing(false)}><Check size={16} /> Done</button></div> : <button className="editor-start-crop" type="button" onClick={() => setImageEditing(true)}><Crop size={16} /> Edit image</button>}
       </div>
       <div className={`editor-award-canvas editor-award-canvas-${previewMode}`}>
         <AwardDisplay
           award={award}
-          interactive
-          showMobileGuide={previewMode === "mobile"}
+          interactive={imageEditing}
+          showImageFrame
           personRef={personRef}
-          onMoveStart={(event) => beginInteraction("move", event)}
+          onImageDoubleClick={() => setImageEditing(true)}
+          onMoveStart={beginInteraction}
           onMove={updateInteraction}
           onMoveEnd={endInteraction}
-          onResizeStart={(event) => beginInteraction("resize", event)}
-          onResize={updateInteraction}
-          onResizeEnd={endInteraction}
         />
       </div>
     </section>
