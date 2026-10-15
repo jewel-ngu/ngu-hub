@@ -29,9 +29,11 @@ export async function GET(request: Request): Promise<Response> {
       if (!sheet.ok) throw new Error("Supplier links unavailable");
       rows = restoreSheetLinks(rows, await sheet.text());
     }
-    // Retain the tab's first row, expose the four public contact fields, and omit later structural headings.
-    const publicRows = redactAccessDetails(kind === "people" ? preparePeopleDirectoryRows(rows) : rows);
-    return Response.json({ tabs, rows: publicRows });
+    if (kind === "people") {
+      const peopleDirectory = preparePeopleDirectoryRows(rows);
+      return Response.json({ tabs, heading: peopleDirectory.heading, rows: redactAccessDetails(peopleDirectory.rows) });
+    }
+    return Response.json({ tabs, rows: redactAccessDetails(rows) });
   } catch {
     return Response.json({ error: "The live directory is temporarily unavailable. Please open the Google Sheet below." }, { status: 502 });
   }

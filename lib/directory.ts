@@ -1,5 +1,6 @@
 export type DirectoryTab = { readonly name: string; readonly gid: string };
-export type DirectoryData = { readonly tabs: readonly DirectoryTab[]; readonly rows: readonly (readonly string[])[] };
+export type DirectoryData = { readonly heading?: string; readonly tabs: readonly DirectoryTab[]; readonly rows: readonly (readonly string[])[] };
+export type PeopleDirectoryData = { readonly heading: string; readonly rows: string[][] };
 export const directoryIds = {
   people: "134wjDVskPEfBtohxGUBrSFNOZcmI-TY9wOTaimrDBV4",
   suppliers: "1S_SkTYzy5mI2natsrXfbw6gazKk7Vuv7BU15U0zx-BI",
@@ -9,19 +10,19 @@ const PEOPLE_DIRECTORY_FIRST_VISIBLE_COLUMN = 2;
 const PEOPLE_DIRECTORY_LAST_VISIBLE_COLUMN = 6;
 const PEOPLE_DIRECTORY_HEADING_LABELS = new Set(["DIRECTOR", "DIRECTORS", "NAME", "POSITION", "MOBILE", "EMAIL"]);
 
-export function preparePeopleDirectoryRows(rows: readonly (readonly string[])[]): string[][] {
-  const [headerRow, ...contactRows] = rows.map((row) => row.slice(PEOPLE_DIRECTORY_FIRST_VISIBLE_COLUMN, PEOPLE_DIRECTORY_LAST_VISIBLE_COLUMN));
-  if (!headerRow) return [];
-  return [
-    headerRow,
-    ...contactRows.filter((row) => {
+export function preparePeopleDirectoryRows(rows: readonly (readonly string[])[]): PeopleDirectoryData {
+  const [headingRow, ...contactRows] = rows;
+  const heading = headingRow?.find((cell) => cell.trim())?.trim() ?? "";
+  const publicRows = contactRows
+    .map((row) => row.slice(PEOPLE_DIRECTORY_FIRST_VISIBLE_COLUMN, PEOPLE_DIRECTORY_LAST_VISIBLE_COLUMN))
+    .filter((row) => {
       if (!row.some((cell) => cell.trim())) return false;
       const headingCount = row.reduce((count, cell) => {
         return count + (PEOPLE_DIRECTORY_HEADING_LABELS.has(cell.trim().toUpperCase()) ? 1 : 0);
       }, 0);
       return headingCount < 2;
-    }),
-  ];
+    });
+  return { heading, rows: publicRows };
 }
 
 export function parseCsv(text: string): string[][] {
