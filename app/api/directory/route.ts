@@ -1,4 +1,4 @@
-import { directoryIds, parseCsv, parseDirectoryTabs, restoreSheetLinks, redactAccessDetails } from "@/lib/directory";
+import { directoryIds, parseCsv, parseDirectoryTabs, preparePeopleDirectoryRows, restoreSheetLinks, redactAccessDetails } from "@/lib/directory";
 import { auth } from "@/lib/auth";
 import { isLocalAccessEnabled } from "@/lib/local-access";
 
@@ -29,8 +29,8 @@ export async function GET(request: Request): Promise<Response> {
       if (!sheet.ok) throw new Error("Supplier links unavailable");
       rows = restoreSheetLinks(rows, await sheet.text());
     }
-    // Only expose the contact columns; employment dates and internal groups are not part of the directory.
-    const publicRows = redactAccessDetails(kind === "people" ? rows.map((row) => row.slice(0, 6)) : rows);
+    // Only expose the four public contact fields and omit the sheet's repeated structural heading rows.
+    const publicRows = redactAccessDetails(kind === "people" ? preparePeopleDirectoryRows(rows) : rows);
     return Response.json({ tabs, rows: publicRows });
   } catch {
     return Response.json({ error: "The live directory is temporarily unavailable. Please open the Google Sheet below." }, { status: 502 });
