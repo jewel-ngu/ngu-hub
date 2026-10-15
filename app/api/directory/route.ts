@@ -29,7 +29,7 @@ export async function GET(request: Request): Promise<Response> {
       if (!sheet.ok) throw new Error("Supplier links unavailable");
       rows = restoreSheetLinks(rows, await sheet.text());
     }
-    // Only expose the four public contact fields and omit the sheet's repeated structural heading rows.
+    // Retain the tab's first row, expose the four public contact fields, and omit later structural headings.
     const publicRows = redactAccessDetails(kind === "people" ? preparePeopleDirectoryRows(rows) : rows);
     return Response.json({ tabs, rows: publicRows });
   } catch {

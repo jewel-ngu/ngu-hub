@@ -741,7 +741,7 @@ a.calendar-event:hover { background: #111; color: #fff; }
 .live-directory td { border-bottom: 1px solid #ddd; line-height: 1.6; min-width: 140px; padding: 18px; vertical-align: top; white-space: pre-line; }
 .live-directory td:empty { min-width: 12px; padding: 0; }
 .live-directory tr:nth-child(even) { background: #eaeae6; }
-.live-directory table:not(.people-directory-table) tr:first-child { background: #111; color: #fff; font-weight: 700; }
+.live-directory tr:first-child { background: #111; color: #fff; font-weight: 700; }
 .live-directory td a { text-decoration: underline; text-underline-offset: 4px; }
 .directory-source { background: #111; color: #fff; display: inline-block; font-size: 13px; margin-top: 22px; padding: 16px 22px; }
 .apps-page .content-section { scroll-margin-top: calc(var(--announcement) + var(--header) + 18px); }
