@@ -1,4 +1,4 @@
-import { directoryIds, parseCsv, parseDirectoryTabs, preparePeopleDirectoryRows, restoreSheetLinks, redactAccessDetails } from "@/lib/directory";
+import { directoryIds, parseCsv, parseDirectoryTabs, preparePeopleDirectoryRows, prepareSupplierDirectoryRows, restoreSheetLinks, redactAccessDetails } from "@/lib/directory";
 import { auth } from "@/lib/auth";
 import { isLocalAccessEnabled } from "@/lib/local-access";
 
@@ -33,7 +33,7 @@ export async function GET(request: Request): Promise<Response> {
       const peopleDirectory = preparePeopleDirectoryRows(rows);
       return Response.json({ tabs, heading: peopleDirectory.heading, rows: redactAccessDetails(peopleDirectory.rows) });
     }
-    return Response.json({ tabs, rows: redactAccessDetails(rows) });
+    return Response.json({ tabs, rows: redactAccessDetails(prepareSupplierDirectoryRows(rows)) });
   } catch {
     return Response.json({ error: "The live directory is temporarily unavailable. Please open the Google Sheet below." }, { status: 502 });
   }

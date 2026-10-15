@@ -25,6 +25,10 @@ export function preparePeopleDirectoryRows(rows: readonly (readonly string[])[])
   return { heading, rows: publicRows };
 }
 
+export function prepareSupplierDirectoryRows(rows: readonly (readonly string[])[]): string[][] {
+  return rows.map((row) => row.slice(1));
+}
+
 export function parseCsv(text: string): string[][] {
   const rows: string[][] = [];
   let row: string[] = [];
