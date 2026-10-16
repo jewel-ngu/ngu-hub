@@ -21,14 +21,15 @@ test("people directory uses row one as its heading and removes structural rows",
   });
 });
 
-test("supplier directory hides its first column on every row", () => {
+test("supplier directory uses row one as its heading and hides the first column", () => {
   const rows = [
-    ["Internal", "Supplier", "Service", "Contact"],
+    ["NGU SUPPLIER LIST", "", "", ""],
+    ["Category label", "", "", ""],
     ["Do not show", "Example Co", "Photography", "hello@example.com"],
   ];
 
-  assert.deepEqual(prepareSupplierDirectoryRows(rows), [
-    ["Supplier", "Service", "Contact"],
-    ["Example Co", "Photography", "hello@example.com"],
-  ]);
+  assert.deepEqual(prepareSupplierDirectoryRows(rows), {
+    heading: "NGU SUPPLIER LIST",
+    rows: [["Example Co", "Photography", "hello@example.com"]],
+  });
 });

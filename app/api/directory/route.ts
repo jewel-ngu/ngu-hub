@@ -33,7 +33,8 @@ export async function GET(request: Request): Promise<Response> {
       const peopleDirectory = preparePeopleDirectoryRows(rows);
       return Response.json({ tabs, heading: peopleDirectory.heading, rows: redactAccessDetails(peopleDirectory.rows) });
     }
-    return Response.json({ tabs, rows: redactAccessDetails(prepareSupplierDirectoryRows(rows)) });
+    const supplierDirectory = prepareSupplierDirectoryRows(rows);
+    return Response.json({ tabs, heading: supplierDirectory.heading, rows: redactAccessDetails(supplierDirectory.rows) });
   } catch {
     return Response.json({ error: "The live directory is temporarily unavailable. Please open the Google Sheet below." }, { status: 502 });
   }

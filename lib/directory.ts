@@ -1,6 +1,6 @@
 export type DirectoryTab = { readonly name: string; readonly gid: string };
 export type DirectoryData = { readonly heading?: string; readonly tabs: readonly DirectoryTab[]; readonly rows: readonly (readonly string[])[] };
-export type PeopleDirectoryData = { readonly heading: string; readonly rows: string[][] };
+export type PreparedDirectoryData = { readonly heading: string; readonly rows: string[][] };
 export const directoryIds = {
   people: "134wjDVskPEfBtohxGUBrSFNOZcmI-TY9wOTaimrDBV4",
   suppliers: "1S_SkTYzy5mI2natsrXfbw6gazKk7Vuv7BU15U0zx-BI",
@@ -10,7 +10,7 @@ const PEOPLE_DIRECTORY_FIRST_VISIBLE_COLUMN = 2;
 const PEOPLE_DIRECTORY_LAST_VISIBLE_COLUMN = 6;
 const PEOPLE_DIRECTORY_HEADING_LABELS = new Set(["DIRECTOR", "DIRECTORS", "NAME", "POSITION", "MOBILE", "EMAIL"]);
 
-export function preparePeopleDirectoryRows(rows: readonly (readonly string[])[]): PeopleDirectoryData {
+export function preparePeopleDirectoryRows(rows: readonly (readonly string[])[]): PreparedDirectoryData {
   const [headingRow, ...contactRows] = rows;
   const heading = headingRow?.find((cell) => cell.trim())?.trim() ?? "";
   const publicRows = contactRows
@@ -25,8 +25,13 @@ export function preparePeopleDirectoryRows(rows: readonly (readonly string[])[])
   return { heading, rows: publicRows };
 }
 
-export function prepareSupplierDirectoryRows(rows: readonly (readonly string[])[]): string[][] {
-  return rows.map((row) => row.slice(1));
+export function prepareSupplierDirectoryRows(rows: readonly (readonly string[])[]): PreparedDirectoryData {
+  const [headingRow, ...supplierRows] = rows;
+  const heading = headingRow?.find((cell) => cell.trim())?.trim() ?? "";
+  const publicRows = supplierRows
+    .map((row) => row.slice(1))
+    .filter((row) => row.some((cell) => cell.trim()));
+  return { heading, rows: publicRows };
 }
 
 export function parseCsv(text: string): string[][] {
