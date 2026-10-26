@@ -2,6 +2,7 @@ import { ArrowRight, CalendarDays, ExternalLink, FileText, Mail, PlayCircle, Shi
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AwardDisplay } from "@/components/award-display";
+import { FirstWeekChecklist } from "@/components/first-week-checklist";
 import { OnboardingChecklist } from "@/components/onboarding-checklist";
 import { StageChecklist } from "@/components/stage-checklist";
 import { TrainingPlaylist } from "@/components/training-playlist";
@@ -12,6 +13,7 @@ import { LiveDirectory } from "@/components/live-directory";
 import { rexTrainingVideos, salesTrainingVideos } from "@/lib/training-data";
 import type { CmsContent } from "@/lib/cms-types";
 import type { TrainingVideo } from "@/lib/training-data";
+import { listingChecklists, type ListingChecklist } from "@/lib/listing-checklists";
 
 export function SectionHeading({ children }: { readonly children: ReactNode }): ReactNode {
   return <h2 className="section-heading">{children}</h2>;
@@ -133,13 +135,31 @@ export function WorkApps(): ReactNode {
 
 export function InfoHub({ content }: { readonly content: CmsContent["infoHub"] }): ReactNode {
   const contacts = supportContacts;
+  const legacyChecklistCard = content.cards.find((card) => card.id === "pre-list");
+  const checklistCard = {
+    id: "agent-listing-checklists",
+    title: "Agent Checklists",
+    description: "Seven practical checklists from appraisal to settlement.",
+    href: "/info-hub/agent-listing-checklists",
+    imageUrl: legacyChecklistCard?.imageUrl ?? "/images/work-apps-hero.png",
+    imagePosition: legacyChecklistCard?.imagePosition ?? "50% 50%",
+  };
+  const fallbackCards = {
+    "welcome-pack": { id: "welcome-pack", title: "Welcome Pack", description: "Everything you need for your first weeks at NGU.", href: "/info-hub/welcome-pack", imageUrl: "/images/work-apps-hero.png", imagePosition: "50% 50%" },
+    "sales-training": { id: "sales-training", title: "Sales Training", description: "Training resources for agents and sales teams.", href: "/info-hub/sales-training", imageUrl: "/images/work-apps-hero.png", imagePosition: "50% 50%" },
+    "rex-training": { id: "rex-training", title: "Rex Training", description: "Recorded webinars to help you get more from Rex.", href: "/info-hub/rex-training", imageUrl: "/images/work-apps-hero.png", imagePosition: "50% 50%" },
+  } as const;
+  const cards = [
+    checklistCard,
+    ...(["welcome-pack", "sales-training", "rex-training"] as const).map((id) => content.cards.find((card) => card.id === id) ?? fallbackCards[id]),
+  ];
 
   return (
     <div className="hub-resource-page">
       <section className="hub-feature-section">
         <p className="eyebrow">EXPLORE THE HUB</p>
         <div className="hub-image-grid">
-          {content.cards.map((card) => <ImageLinkCard key={card.id} title={card.title} description={card.description} href={card.href} image={card.imageUrl} imagePosition={card.imagePosition} />)}
+          {cards.map((card) => <ImageLinkCard key={card.id} title={card.title} description={card.description} href={card.href} image={card.imageUrl} imagePosition={card.imagePosition} />)}
         </div>
       </section>
 
@@ -279,17 +299,20 @@ export function OurPeople({ award, people }: { readonly award: CmsContent["award
   return (
     <div className="content-stack people-page">
       <AwardDisplay award={award} />
-      <PeopleGroup title="MEET OUR PRESTIGE AGENTS" people={people.prestige} />
-      <PeopleGroup title="MEET OUR ELITE AGENTS" people={people.elite} />
+      <PeopleGroup title="MEET OUR PRESTIGE AGENTS" badgeSrc="/images/prestige-agent-badge.png" people={people.prestige} />
+      <PeopleGroup title="MEET OUR ELITE AGENTS" badgeSrc="/images/elite-agent-badge.png" people={people.elite} />
       <LiveDirectory kind="people" />
     </div>
   );
 }
 
-function PeopleGroup({ title, people }: { readonly title: string; readonly people: CmsContent["people"]["prestige"] }): ReactNode {
+function PeopleGroup({ title, badgeSrc, people }: { readonly title: string; readonly badgeSrc: string; readonly people: CmsContent["people"]["prestige"] }): ReactNode {
   return (
     <section className="content-section">
-      <SectionHeading>{title}</SectionHeading>
+      <div className="people-group-heading">
+        <SectionHeading>{title}</SectionHeading>
+        <img src={badgeSrc} alt="" />
+      </div>
       <div className="people-grid">{people.map((person) => <article key={person.id}><img src={person.imageUrl} alt={person.name} loading="lazy" style={{ objectPosition: person.imagePosition }} /><h3>{person.name}</h3><p>{person.role}</p></article>)}</div>
     </section>
   );
@@ -305,14 +328,28 @@ const marketingSamples = [
 export function NewToNgu(): ReactNode {
   return (
     <div className="new-ngu-page">
-      <OnboardingChecklist />
-      <section className="new-ngu-form-six"><div><p className="eyebrow">TO COMPLETE A FORM 6</p><h2>Start with the right process.</h2><p>Watch the tutorial to understand how NGU completes a Form 6, and why it is important.</p></div><iframe src="https://drive.google.com/file/d/1s5EN21opIJhJAMr_Lv3G6erHobP9Beew/preview" title="How to complete a Form 6" allow="autoplay" /></section>
+      <section className="new-ngu-welcome"><p className="eyebrow">01 / WELCOME TO NGU REAL ESTATE</p><div><h2>Welcome aboard.</h2><div><p>Welcome to NGU Real Estate. We&apos;re excited to have you joining a network built on energy, accountability and an unwavering commitment to excellent service.</p><p>Whether you&apos;re joining an existing office or establishing a new team, your first weeks are about getting connected, understanding the NGU way and building confidence in the systems that support your role.</p><p>Make the NGU Hub your starting point. It brings together your onboarding, training, resources and the people who can help.</p><strong>We&apos;re glad you&apos;re here.</strong></div></div></section>
+      <FirstWeekChecklist />
+      <section className="new-ngu-pathway"><div><p className="eyebrow">03 / YOUR ONBOARDING PATHWAY</p><h2>Everything you need, in one clear place.</h2><p>Complete your NGU profile and office setup, learn the Form 6 process, then choose the Sales Agent or Sales Admin pathway for role-specific software and training.</p><Link href="/new-to-ngu/onboarding">Start onboarding <ArrowRight size={18} /></Link></div><div className="new-ngu-pathway-preview"><article><span>01</span><h3>Core setup</h3><p>NGU Profile and Office Set-Up.</p></article><article><span>02</span><h3>Form 6</h3><p>The right process from the start.</p></article><article><span>03</span><h3>Your role</h3><p>Sales Agent or Sales Admin pathway.</p></article></div></section>
+      <section className="new-ngu-team"><div><p className="eyebrow">04 / YOUR SUPPORT NETWORK</p><h2>Meet the people behind your first weeks.</h2></div><div>{[["NGU Leadership","Direction, standards and the vision for the network."],["HQ Support Team","Marketing, operations, accounts and compliance support."],["Your Principal","Local leadership, coaching and role expectations."],["Your Office Champion","Your first point of contact for day-to-day setup."]].map(([title, description], index) => <article key={title}><span>{String(index + 1).padStart(2,"0")}</span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
+      <section className="new-ngu-induction"><div><p className="eyebrow">05 / NGU INDUCTION</p><h2>Your introduction to how we work.</h2><p>Induction connects the brand, the systems and the people who support your role.</p></div><ol>{["Our story, values and service standards","The NGU brand and professional presentation","Core systems and where to find resources","Compliance, communication and escalation pathways","Your team, training rhythm and next steps"].map((item, index) => <li key={item}><span>{String(index + 1).padStart(2,"0")}</span>{item}</li>)}</ol></section>
+      <section className="new-ngu-essential-resources"><div><p className="eyebrow">06 / ESSENTIAL RESOURCES</p><h2>Your quickest routes into the Hub.</h2></div><div>{[["Systems & Access","/your-work-apps"],["Marketing & Branding","/info-hub/welcome-pack"],["Compliance","/amlctf"],["Training & Manuals","/info-hub/sales-training"],["Events & Training","/#ngu-calendar"],["People & Support","/our-people"]].map(([title, href]) => <Link href={href} key={title}><h3>{title}</h3><ArrowRight /></Link>)}</div></section>
+      <section className="new-ngu-faq"><div><p className="eyebrow">07 / COMMON QUESTIONS</p><h2>A few things new starters often ask.</h2></div><div><details><summary>Where should I begin?</summary><p>Start with the seven-day checklist above, then open your onboarding pathway and complete the core setup before the role-specific tasks.</p></details><details><summary>Who can help if I cannot access a system?</summary><p>Speak with your Office Champion first. They can confirm your setup and direct any access request to the right HQ contact.</p></details><details><summary>Does my progress save?</summary><p>Yes. Checklist progress is saved on this device so you can leave and return later.</p></details><details><summary>Can I print or save the checklists?</summary><p>Yes. Use the Print / save PDF button on each checklist for a clean, print-friendly copy.</p></details></div></section>
+    </div>
+  );
+}
+
+function OnboardingMarketingResources(): ReactNode {
+  return <>
       <section className="marketing-system"><div><p className="eyebrow">MARKETING MATERIALS</p><h2>Two platforms, one consistent brand.</h2><p>RealHub brings Rex data into NGU templates. Use Basecamp for other creative requests and custom work.</p><div className="platform-links"><a href="https://launchpad.37signals.com/signin" target="_blank" rel="noreferrer">Open Basecamp <ExternalLink size={16} /></a><a href="https://realhub-frontend.realbase.io/" target="_blank" rel="noreferrer">Open RealHub <ExternalLink size={16} /></a></div></div><ul><li>Brochures — A3, A3 landscape and A4</li><li>Signboards — generic, vertical and three-photo</li><li>DL and DLX flyers</li><li>A4 flyers</li><li>Social media assets</li><li>Business cards</li></ul></section>
       <section className="initial-marketing-pack"><p className="eyebrow">INITIAL MARKETING MATERIAL PACK</p><h2>Request these through Basecamp.</h2><div>{["Offer to Purchase Form", "A-Frame", "Business Card", "Text Signboard", "Blank Letterhead", "Know What Your Home is Worth Letter", "Street Anniversary Letter", "Just Appraised DLs", "A5 Black Ribbon Card", "Marketing Schedule Annexure A"].map((item) => <span key={item}>{item}</span>)}</div></section>
       <section className="new-ngu-resources"><p className="eyebrow">BRAND RESOURCES</p><div><a href="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/NGU+Real+Estate_Logo+and+Branding+Guidelines+2025_Edgar+NEW.pdf" target="_blank" rel="noreferrer"><FileText /><h3>Logo & Branding Guidelines</h3><ExternalLink /></a><a href="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" target="_blank" rel="noreferrer"><FileText /><h3>Marketing Materials 2025–2026</h3><ExternalLink /></a><a href="https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/Design+golden+rule+2025.pdf" target="_blank" rel="noreferrer"><FileText /><h3>Design Golden Rule</h3><ExternalLink /></a></div></section>
       <section className="sample-documents"><p className="eyebrow">SAMPLE MARKETING MATERIALS</p><div>{marketingSamples.map(([title, href, preview]) => <article key={title}><iframe src={preview} title={`${title} preview`} loading="lazy" /><a href={href} target="_blank" rel="noreferrer">{title} <ExternalLink size={16} /></a></article>)}</div></section>
-    </div>
-  );
+    </>;
+}
+
+export function NewToNguOnboarding(): ReactNode {
+  return <div className="new-ngu-page new-ngu-onboarding-page"><OnboardingChecklist /><OnboardingMarketingResources /></div>;
 }
 
 export function RealEstateCpd(): ReactNode {
@@ -324,76 +361,34 @@ export function RealEstateCpd(): ReactNode {
   );
 }
 
-type ToolkitStageName = "pre-list" | "pre-sale" | "open-home";
-
-type ToolkitStageData = {
-  readonly title: string;
-  readonly checklist: readonly string[];
-  readonly apps: readonly { readonly name: string; readonly description: string; readonly href: string }[];
-  readonly resources: readonly { readonly title: string; readonly description: string; readonly href: string }[];
-};
-
-const toolkitStages = {
-  "pre-list": {
-    title: "Pre-List",
-    checklist: ["Contract", "CMAs", "Pre-List Booklet", "Trades List", "Realty Assist Brochure", "Client Service List", "Business Cards / Pen"],
-    apps: [
-      { name: "Basecamp", description: "Creative requests and team tasks", href: "https://launchpad.37signals.com/signin" },
-      { name: "RealHub", description: "NGU marketing templates", href: "https://realhub-frontend.realbase.io/" },
-      { name: "Rex Pipeline", description: "Manage and progress appraisals", href: "https://app.rexsoftware.com/appraisals" },
-      { name: "Realty Assist", description: "Vendor-paid marketing", href: "https://realtyassist.com.au/" },
-      { name: "Cognito Forms", description: "Create e-appraisal forms", href: "https://www.cognitoforms.com/" },
-    ],
-    resources: [
-      { title: "Business Cards", description: "Sample NGU business-card artwork", href: "https://drive.google.com/file/d/1Ya3wtaE4D7impeR_2e24Pai9XGg4nssk/view" },
-      { title: "Marketing Materials 2025–2026", description: "Browse the complete current marketing range", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" },
-    ],
-  },
-  "pre-sale": {
-    title: "Pre-Sale",
-    checklist: ["Photographers & Videographers", "Signboard & Brochures", "Flyers", "Social Media Post", "Stylists"],
-    apps: [
-      { name: "Basecamp", description: "Creative requests and team tasks", href: "https://launchpad.37signals.com/signin" },
-      { name: "RealHub", description: "NGU campaign marketing templates", href: "https://realhub-frontend.realbase.io/" },
-    ],
-    resources: [
-      { title: "Signboards", description: "Sample NGU signboard artwork", href: "https://drive.google.com/file/d/123kKVyQuASt9xQxNN37i1VLk00rR6VbK/view" },
-      { title: "Flyers & Social Media", description: "Browse the complete current marketing range", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" },
-      { title: "Social Media Post Request", description: "Send a listing or achievement to the marketing team", href: "https://form.jotform.com/251597367345064" },
-    ],
-  },
-  "open-home": {
-    title: "Open Home",
-    checklist: ["Auction Documents (if needed)", "Brochures", "Blank Contract", "Rental Appraisal (laminated)", "Floor Plans", "Broker Flyer (Prestige Finance)", "Building & Pest (if applicable)", "QR Code for Offer Link", "Business Cards", "Pens", "Buyer Guides", "Welcome Mat", "Candles / Lighter", "Speaker", "Realty Assist Flyers", "Water Bottles"],
-    apps: [
-      { name: "Basecamp", description: "Creative requests and team tasks", href: "https://launchpad.37signals.com/signin" },
-      { name: "Homepass", description: "Check in open-home attendees", href: "https://app.homepass.com/login" },
-      { name: "RealHub", description: "NGU campaign marketing templates", href: "https://realhub-frontend.realbase.io/" },
-      { name: "Realty Assist", description: "Vendor-paid marketing", href: "https://realtyassist.com.au/" },
-    ],
-    resources: [
-      { title: "Brochures", description: "Browse brochure formats and campaign collateral", href: "https://ngu-real-estate-design.s3.ap-southeast-2.amazonaws.com/ngurealestate/images/Intranet/Welcome+Package/NGU+Real+Estate+-+Marketing+Material+2025-2026.pdf" },
-      { title: "Business Cards", description: "Sample NGU business-card artwork", href: "https://drive.google.com/file/d/1Ya3wtaE4D7impeR_2e24Pai9XGg4nssk/view" },
-    ],
-  },
-} satisfies Readonly<Record<ToolkitStageName, ToolkitStageData>>;
-
-export function ToolkitStage({ stage }: { readonly stage: ToolkitStageName }): ReactNode {
-  const data = toolkitStages[stage];
+export function AgentListingChecklists(): ReactNode {
   return (
-    <div className="toolkit-stage-page">
-      <StageChecklist title={data.title} items={data.checklist} storageKey={`ngu-${stage}-checklist`} />
-      <section className="toolkit-apps">
-        <div className="toolkit-apps-inner">
-          <div><p className="eyebrow">RECOMMENDED APPS</p><h2>The tools for this stage.</h2></div>
-          <div className="toolkit-app-grid">{data.apps.map((app) => <a href={app.href} target="_blank" rel="noreferrer" key={app.name}><div><h3>{app.name}</h3><p>{app.description}</p></div><ExternalLink size={18} /></a>)}</div>
-        </div>
+    <div className="listing-checklist-index">
+      <section className="listing-checklist-intro">
+        <div><p className="eyebrow">SEVEN STAGES · ONE CONSISTENT PROCESS</p><h2>Every step. No guessing.</h2></div>
+        <p>Use these checklists from the first appraisal preparation through to settlement and long-term follow-up. Each checklist saves progress on this device.</p>
       </section>
-      <LiveDirectory kind="suppliers" />
-      <section className="toolkit-resources">
-        <p className="eyebrow">SAMPLE MARKETING MATERIALS</p>
-        <div>{data.resources.map((resource) => <a href={resource.href} target="_blank" rel="noreferrer" key={resource.title}><FileText /><span><strong>{resource.title}</strong><small>{resource.description}</small></span><ExternalLink size={18} /></a>)}</div>
+      <section className="listing-checklist-links" aria-label="Agent listing checklist stages">
+        {listingChecklists.map((checklist, index) => (
+          <Link href={`/info-hub/agent-listing-checklists/${checklist.slug}`} key={checklist.slug}>
+            <span>{String(index + 1).padStart(2, "0")}</span><div><h3>{checklist.title}</h3><p>{checklist.description}</p></div><ArrowRight />
+          </Link>
+        ))}
       </section>
+    </div>
+  );
+}
+
+export function ListingChecklistPage({ checklist }: { readonly checklist: ListingChecklist }): ReactNode {
+  const currentIndex = listingChecklists.findIndex((item) => item.slug === checklist.slug);
+  const nextChecklist = listingChecklists[currentIndex + 1];
+  return (
+    <div className="listing-checklist-page">
+      <StageChecklist title={checklist.title} instruction={checklist.instruction} sections={checklist.sections} storageKey={`ngu-listing-${checklist.slug}`} />
+      <nav className="listing-checklist-nav" aria-label="Checklist navigation">
+        <Link href="/info-hub/agent-listing-checklists">All seven checklists</Link>
+        {nextChecklist && <Link href={`/info-hub/agent-listing-checklists/${nextChecklist.slug}`}>Next: {nextChecklist.title} <ArrowRight size={17} /></Link>}
+      </nav>
     </div>
   );
 }

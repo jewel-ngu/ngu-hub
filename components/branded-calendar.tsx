@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { HubEvent } from "@/lib/calendar-config";
 
 type BrandedCalendarProps = {
@@ -31,6 +31,42 @@ function keyForDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+function hasOptionalString(value: object, key: "imageUrl" | "meetingUrl" | "location"): boolean {
+  if (key === "imageUrl") {
+    return !("imageUrl" in value) || typeof value.imageUrl === "string" || value.imageUrl === undefined;
+  }
+  if (key === "meetingUrl") {
+    return !("meetingUrl" in value) || typeof value.meetingUrl === "string" || value.meetingUrl === undefined;
+  }
+  return !("location" in value) || typeof value.location === "string" || value.location === undefined;
+}
+
+function isHubEvent(value: unknown): value is HubEvent {
+  return typeof value === "object"
+    && value !== null
+    && "id" in value
+    && typeof value.id === "string"
+    && "title" in value
+    && typeof value.title === "string"
+    && "start" in value
+    && typeof value.start === "string"
+    && "end" in value
+    && typeof value.end === "string"
+    && "allDay" in value
+    && typeof value.allDay === "boolean"
+    && hasOptionalString(value, "imageUrl")
+    && hasOptionalString(value, "meetingUrl")
+    && hasOptionalString(value, "location");
+}
+
+function calendarEventsFromResponse(value: unknown): readonly HubEvent[] | undefined {
+  if (typeof value !== "object" || value === null || !("events" in value)) {
+    return undefined;
+  }
+
+  return Array.isArray(value.events) && value.events.every(isHubEvent) ? value.events : undefined;
+}
+
 function createDays(year: number, month: number): readonly CalendarDay[] {
   const firstWeekday = new Date(Date.UTC(year, month, 1)).getUTCDay();
   const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
@@ -49,30 +85,86 @@ function createDays(year: number, month: number): readonly CalendarDay[] {
 
 export function BrandedCalendar({ events, initialMonth }: BrandedCalendarProps): ReactNode {
   const [monthOffset, setMonthOffset] = useState(0);
+  const [calendarEvents, setCalendarEvents] = useState(events);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const loadedMonths = useRef(new Set([initialMonth]));
   const [initialYear, initialMonthNumber] = initialMonth.split("-").map(Number);
   const baseYear = initialYear ?? new Date().getUTCFullYear();
   const baseMonth = (initialMonthNumber ?? 1) - 1;
   const visibleDate = new Date(Date.UTC(baseYear, baseMonth + monthOffset, 1));
   const visibleYear = visibleDate.getUTCFullYear();
   const visibleMonth = visibleDate.getUTCMonth();
+  const visibleMonthKey = `${visibleYear}-${String(visibleMonth + 1).padStart(2, "0")}`;
   const days = createDays(visibleYear, visibleMonth);
   const today = eventDateKey.format(new Date());
 
+  useEffect(() => {
+    if (loadedMonths.current.has(visibleMonthKey)) {
+      return;
+    }
+
+    const controller = new AbortController();
+    loadedMonths.current.add(visibleMonthKey);
+    setIsLoading(true);
+    setLoadError(false);
+
+    async function loadMonth(): Promise<void> {
+      try {
+        const response = await fetch(`/api/calendar?month=${encodeURIComponent(visibleMonthKey)}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) {
+          throw new Error(`Calendar request failed with status ${response.status}.`);
+        }
+
+        const monthEvents = calendarEventsFromResponse(await response.json());
+        if (!monthEvents) {
+          throw new Error("Calendar response was invalid.");
+        }
+
+        setCalendarEvents((currentEvents) => {
+          const mergedEvents = new Map(currentEvents.map((event) => [event.id, event]));
+          for (const event of monthEvents) {
+            mergedEvents.set(event.id, event);
+          }
+          return [...mergedEvents.values()];
+        });
+      } catch (error: unknown) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+        loadedMonths.current.delete(visibleMonthKey);
+        setLoadError(true);
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadMonth();
+    return () => controller.abort();
+  }, [visibleMonthKey]);
+
   const eventsByDate = useMemo(() => {
     const grouped = new Map<string, HubEvent[]>();
-    for (const event of events) {
+    for (const event of calendarEvents) {
       const key = eventDateKey.format(new Date(event.start));
       const existing = grouped.get(key) ?? [];
       existing.push(event);
       grouped.set(key, existing);
     }
     return grouped;
-  }, [events]);
+  }, [calendarEvents]);
 
   return (
     <div className="ngu-calendar" aria-label={`${monthHeading.format(visibleDate)} calendar`}>
       <div className="ngu-calendar-toolbar">
         <h3>{monthHeading.format(visibleDate)}</h3>
+        <span className={`calendar-sync-status${loadError ? " error" : ""}`} role="status">
+          {isLoading ? "Loading events…" : loadError ? "Events unavailable" : ""}
+        </span>
         <div>
           <button type="button" onClick={() => setMonthOffset(0)}>Today</button>
           <button type="button" aria-label="Previous month" onClick={() => setMonthOffset((offset) => offset - 1)}><ChevronLeft /></button>

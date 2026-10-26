@@ -36,15 +36,21 @@ flowchart TB
     corePages --> aml["/amlctf"]
     corePages --> workApps["/your-work-apps"]
     corePages --> newToNgu["/new-to-ngu"]
+    newToNgu --> newToNguOnboarding["/new-to-ngu/onboarding"]
     corePages --> cpd["/real-estate-cpd"]
     corePages --> people["/our-people"]
     corePages --> trusted["/trusted-network"]
     corePages --> offices["/ngu-offices"]
 
     catchall --> infoHub["/info-hub"]
-    infoHub --> preList["/info-hub/agent-toolkit/pre-list"]
-    infoHub --> preSale["/info-hub/agent-toolkit/pre-sale"]
-    infoHub --> openHome["/info-hub/agent-toolkit/open-home"]
+    infoHub --> checklists["/info-hub/agent-listing-checklists"]
+    checklists --> preAppraisal["/pre-appraisal"]
+    checklists --> preLaunch["/pre-launch"]
+    checklists --> launchOpen["/launch-open-home"]
+    checklists --> postOpen["/post-open-home"]
+    checklists --> auction["/auction"]
+    checklists --> underContract["/under-contract"]
+    checklists --> settlement["/settlement"]
     infoHub --> welcome["/info-hub/welcome-pack"]
     infoHub --> sales["/info-hub/sales-training"]
     infoHub --> rex["/info-hub/rex-training"]
@@ -54,7 +60,7 @@ flowchart TB
     classDef route fill:#fff,color:#111827,stroke:#9ca3af;
     class app,protected,api,corePages,infoHub folder;
     class home,catchall,signIn,authApi,directoryApi file;
-    class leaderboard,aml,workApps,newToNgu,cpd,people,trusted,offices,preList,preSale,openHome,welcome,sales,rex route;
+    class leaderboard,aml,workApps,newToNgu,cpd,people,trusted,offices,checklists,preAppraisal,preLaunch,launchOpen,postOpen,auction,underContract,settlement,welcome,sales,rex route;
 ```
 
 The home page has its own route file. All other protected content pages are selected by the catch-all router from route metadata and specialised content components.
@@ -108,7 +114,7 @@ flowchart LR
 - The home hero serves the supplied video locally from `public/ngu-home.mov`, with the city image retained as a loading fallback.
 - `lib/site-data.ts` is the source of truth for navigation entries, simple page definitions, training lists, people, offices, and work-app groups.
 - `components/content.tsx` contains the reusable and specialised content renderers used by the catch-all route.
-- The old standalone Agent Toolkit index route has been retired. Its Pre-List, Pre-Sale and Open Home pages remain directly accessible and combine locally saved checklists, work-app links, the live supplier directory and marketing resources.
+- The old standalone Pre-List, Pre-Sale and Open Home routes have been retired. `/info-hub/agent-listing-checklists` now links to seven focused checklist pages covering Pre-Appraisal, Pre-Launch, Launch / Open Home, Post Open Home, Auction, Under Contract and Settlement. Checklist progress is saved locally in the current browser and can be printed or saved as a PDF.
 - Sales and Rex training use a selectable video-player layout backed by the dated links in `lib/training-data.ts`.
 - `Hero` and `Footer` provide the shared content-page framing, while `SiteShell` owns desktop and mobile navigation.
 

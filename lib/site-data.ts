@@ -32,9 +32,7 @@ export const navItems: readonly NavItem[] = [
 ];
 
 export const infoNavItems: readonly NavItem[] = [
-  { label: "Pre-List", href: "/info-hub/agent-toolkit/pre-list" },
-  { label: "Pre-Sale", href: "/info-hub/agent-toolkit/pre-sale" },
-  { label: "Open Home", href: "/info-hub/agent-toolkit/open-home" },
+  { label: "Agent Checklists", href: "/info-hub/agent-listing-checklists" },
   { label: "Welcome Pack", href: "/info-hub/welcome-pack" },
   { label: "Sales Training", href: "/info-hub/sales-training" },
   { label: "Rex Training", href: "/info-hub/rex-training" },

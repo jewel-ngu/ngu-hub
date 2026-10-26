@@ -7,7 +7,6 @@ export function Footer(): ReactNode {
     <footer className="footer">
       <div className="footer-brand">
         <img src="/images/ngu-mark.png" alt="NGU Real Estate" />
-        <p>Never give up.</p>
       </div>
       <div>
         <h2>Stay connected</h2>
