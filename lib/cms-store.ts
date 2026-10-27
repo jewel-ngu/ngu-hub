@@ -57,10 +57,44 @@ const DEFAULT_BLOB_DOCUMENT: BlobCmsDocument = {
   revisions: [],
 };
 
+function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function migrateInfoHub(value: unknown): unknown {
+  if (!isRecord(value) || !Array.isArray(value.cards)) return value;
+  const hasCurrentChecklistCard = value.cards.some((card) => isRecord(card) && card.id === "agent-listing-checklists");
+  const cards = value.cards.flatMap((card): readonly unknown[] => {
+    if (!isRecord(card)) return [card];
+    if (card.id === "pre-sale" || card.id === "open-home") return [];
+    if (card.id !== "pre-list") return [card];
+    if (hasCurrentChecklistCard) return [];
+    return [{
+      ...card,
+      id: "agent-listing-checklists",
+      title: "Agent Checklists",
+      description: "Seven practical checklists from appraisal to settlement.",
+      href: "/info-hub/agent-listing-checklists",
+    }];
+  });
+  return { ...value, cards };
+}
+
+function migrateContent(value: unknown): unknown {
+  if (!isRecord(value)) return value;
+  const pages = isRecord(value.pages) ? { ...DEFAULT_CMS_CONTENT.pages, ...value.pages } : DEFAULT_CMS_CONTENT.pages;
+  return { ...value, pages, infoHub: migrateInfoHub(value.infoHub) };
+}
+
+function parseContentValue(value: unknown): CmsContent | null {
+  const migrated = migrateContent(value);
+  return isCmsContent(migrated) ? migrated : null;
+}
+
 function parseContent(raw: string): CmsContent {
   try {
     const parsed: unknown = JSON.parse(raw);
-    return isCmsContent(parsed) ? parsed : DEFAULT_CMS_CONTENT;
+    return parseContentValue(parsed) ?? DEFAULT_CMS_CONTENT;
   } catch {
     return DEFAULT_CMS_CONTENT;
   }
@@ -93,15 +127,17 @@ function parseNullableString(value: unknown): string | null {
 function parseBlobDocument(value: unknown): BlobCmsDocument {
   if (typeof value !== "object" || value === null || !("state" in value) || typeof value.state !== "object" || value.state === null) return DEFAULT_BLOB_DOCUMENT;
   const stateValue = value.state;
-  const draft = "draft" in stateValue && isCmsContent(stateValue.draft) ? stateValue.draft : DEFAULT_CMS_CONTENT;
-  const published = "published" in stateValue && isCmsContent(stateValue.published) ? stateValue.published : DEFAULT_CMS_CONTENT;
+  const draft = "draft" in stateValue ? parseContentValue(stateValue.draft) ?? DEFAULT_CMS_CONTENT : DEFAULT_CMS_CONTENT;
+  const published = "published" in stateValue ? parseContentValue(stateValue.published) ?? DEFAULT_CMS_CONTENT : DEFAULT_CMS_CONTENT;
   const editorEmails = "editorEmails" in value ? normalizeEditorEmails(value.editorEmails) ?? DEFAULT_EDITOR_EMAILS : DEFAULT_EDITOR_EMAILS;
   const revisions: readonly CmsRevision[] = "revisions" in value && Array.isArray(value.revisions)
     ? value.revisions.flatMap((revision): readonly CmsRevision[] => {
-        if (typeof revision !== "object" || revision === null || !("content" in revision) || !isCmsContent(revision.content)) return [];
+        if (typeof revision !== "object" || revision === null || !("content" in revision)) return [];
+        const content = parseContentValue(revision.content);
+        if (!content) return [];
         const publishedAt = "publishedAt" in revision ? parseNullableString(revision.publishedAt) : null;
         const publishedBy = "publishedBy" in revision ? parseNullableString(revision.publishedBy) : null;
-        return publishedAt && publishedBy ? [{ content: revision.content, publishedAt, publishedBy }] : [];
+        return publishedAt && publishedBy ? [{ content, publishedAt, publishedBy }] : [];
       })
     : [];
   return {

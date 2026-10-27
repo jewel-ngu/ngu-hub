@@ -135,7 +135,7 @@ export function WorkApps(): ReactNode {
 
 export function InfoHub({ content }: { readonly content: CmsContent["infoHub"] }): ReactNode {
   const contacts = supportContacts;
-  const legacyChecklistCard = content.cards.find((card) => card.id === "pre-list");
+  const legacyChecklistCard = content.cards.find((card) => card.id === "agent-listing-checklists") ?? content.cards.find((card) => card.id === "pre-list");
   const checklistCard = {
     id: "agent-listing-checklists",
     title: "Agent Checklists",
@@ -174,6 +174,7 @@ export function InfoHub({ content }: { readonly content: CmsContent["infoHub"] }
       </section>
 
       <HelpDirectory contacts={contacts} />
+      <TeamMemberAdministration />
     </div>
   );
 }
@@ -205,6 +206,18 @@ function RequestCard({ title, category, description, href, image, imagePosition 
 }
 
 type Contact = readonly [title: string, subtitle: string, email: string | readonly string[]];
+
+function TeamMemberAdministration(): ReactNode {
+  return (
+    <section className="team-member-admin">
+      <div><p className="eyebrow">TEAM MEMBER ADMINISTRATION</p><h2>Manage team changes in one place.</h2><p>Use the appropriate form to begin the internal process for a new starter or an employee leaving NGU.</p></div>
+      <div>
+        <a href="https://flvihrc8zxz.typeform.com/to/LTS0KUMg" target="_blank" rel="noreferrer"><span>01</span><div><h3>Onboard a new team member</h3><p>Submit the details needed to prepare access, equipment and the employee&apos;s NGU setup.</p></div><ExternalLink size={22} /></a>
+        <a href="https://flvihrc8zxz.typeform.com/to/gVFS3sL2" target="_blank" rel="noreferrer"><span>02</span><div><h3>Offboard a team member</h3><p>Notify the team about a departing employee so access and internal records can be closed correctly.</p></div><ExternalLink size={22} /></a>
+      </div>
+    </section>
+  );
+}
 
 function HelpDirectory({ contacts }: { readonly contacts: readonly Contact[] }): ReactNode {
   return (
@@ -333,7 +346,7 @@ export function NewToNgu(): ReactNode {
       <section className="new-ngu-pathway"><div><p className="eyebrow">03 / YOUR ONBOARDING PATHWAY</p><h2>Everything you need, in one clear place.</h2><p>Complete your NGU profile and office setup, learn the Form 6 process, then choose the Sales Agent or Sales Admin pathway for role-specific software and training.</p><Link href="/new-to-ngu/onboarding">Start onboarding <ArrowRight size={18} /></Link></div><div className="new-ngu-pathway-preview"><article><span>01</span><h3>Core setup</h3><p>NGU Profile and Office Set-Up.</p></article><article><span>02</span><h3>Form 6</h3><p>The right process from the start.</p></article><article><span>03</span><h3>Your role</h3><p>Sales Agent or Sales Admin pathway.</p></article></div></section>
       <section className="new-ngu-team"><div><p className="eyebrow">04 / YOUR SUPPORT NETWORK</p><h2>Meet the people behind your first weeks.</h2></div><div>{[["NGU Leadership","Direction, standards and the vision for the network."],["HQ Support Team","Marketing, operations, accounts and compliance support."],["Your Principal","Local leadership, coaching and role expectations."],["Your Office Champion","Your first point of contact for day-to-day setup."]].map(([title, description], index) => <article key={title}><span>{String(index + 1).padStart(2,"0")}</span><h3>{title}</h3><p>{description}</p></article>)}</div></section>
       <section className="new-ngu-induction"><div><p className="eyebrow">05 / NGU INDUCTION</p><h2>Your introduction to how we work.</h2><p>Induction connects the brand, the systems and the people who support your role.</p></div><ol>{["Our story, values and service standards","The NGU brand and professional presentation","Core systems and where to find resources","Compliance, communication and escalation pathways","Your team, training rhythm and next steps"].map((item, index) => <li key={item}><span>{String(index + 1).padStart(2,"0")}</span>{item}</li>)}</ol></section>
-      <section className="new-ngu-essential-resources"><div><p className="eyebrow">06 / ESSENTIAL RESOURCES</p><h2>Your quickest routes into the Hub.</h2></div><div>{[["Systems & Access","/your-work-apps"],["Marketing & Branding","/info-hub/welcome-pack"],["Compliance","/amlctf"],["Training & Manuals","/info-hub/sales-training"],["Events & Training","/#ngu-calendar"],["People & Support","/our-people"]].map(([title, href]) => <Link href={href} key={title}><h3>{title}</h3><ArrowRight /></Link>)}</div></section>
+      <section className="new-ngu-essential-resources"><div><p className="eyebrow">06 / ESSENTIAL RESOURCES</p><h2>Your quickest routes into the Hub.</h2></div><div>{[["Your Apps","/your-work-apps"],["Welcome Pack","/info-hub/welcome-pack"],["AML/CTF","/amlctf"],["Sales Training","/info-hub/sales-training"],["NGU Calendar","/#ngu-calendar"],["Our People","/our-people"]].map(([title, href]) => <Link href={href} key={title}><h3>{title}</h3><ArrowRight /></Link>)}</div></section>
       <section className="new-ngu-faq"><div><p className="eyebrow">07 / COMMON QUESTIONS</p><h2>A few things new starters often ask.</h2></div><div><details><summary>Where should I begin?</summary><p>Start with the seven-day checklist above, then open your onboarding pathway and complete the core setup before the role-specific tasks.</p></details><details><summary>Who can help if I cannot access a system?</summary><p>Speak with your Office Champion first. They can confirm your setup and direct any access request to the right HQ contact.</p></details><details><summary>Does my progress save?</summary><p>Yes. Checklist progress is saved on this device so you can leave and return later.</p></details><details><summary>Can I print or save the checklists?</summary><p>Yes. Use the Print / save PDF button on each checklist for a clean, print-friendly copy.</p></details></div></section>
     </div>
   );

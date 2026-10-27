@@ -1005,6 +1005,14 @@ a.calendar-event:hover { background: #111; color: #fff; }
 .new-ngu-pathway-preview span { color: #888; font-size: 11px; letter-spacing: .15em; }
 .new-ngu-pathway-preview h3, .new-ngu-pathway-preview p { margin: 0; }
 .new-ngu-pathway-preview p { color: #666; }
+.team-member-admin { background: #111; color: #fff; display: grid; gap: 72px; grid-template-columns: minmax(300px,.8fr) minmax(0,1.2fr); padding: 96px clamp(24px,6vw,88px); }
+.team-member-admin h2 { font-size: clamp(42px,5.4vw,76px); letter-spacing: -.055em; line-height: .94; margin: 0; }
+.team-member-admin > div:first-child > p:last-child { color: #aaa; font-size: 18px; line-height: 1.6; max-width: 620px; }
+.team-member-admin > div:last-child { border-top: 1px solid #3d3d3d; }
+.team-member-admin a { align-items: center; border-bottom: 1px solid #3d3d3d; display: grid; gap: 22px; grid-template-columns: auto 1fr auto; padding: 28px 4px; }
+.team-member-admin a > span { color: #777; font-size: 11px; letter-spacing: .15em; }
+.team-member-admin h3 { font-size: 24px; margin: 0 0 9px; }
+.team-member-admin a p { color: #aaa; line-height: 1.5; margin: 0; }
 .new-ngu-team { background: #ecebe7; }
 .new-ngu-team > div { margin: 0 auto; max-width: 1320px; }
 .new-ngu-team > div:first-child { display: grid; gap: 56px; grid-template-columns: 1fr 1.3fr; margin-bottom: 44px; }
@@ -1107,8 +1115,8 @@ a.calendar-event:hover { background: #111; color: #fff; }
   .playlist-now-playing > div { align-items: flex-start; flex-direction: column; gap: 12px; }
   .welcome-start-grid { padding-top: 64px; }
   .welcome-start-grid article { padding: 28px 22px; }
-  .new-ngu-welcome > div, .new-ngu-pathway, .new-ngu-team > div:first-child, .new-ngu-induction, .new-ngu-essential-resources > div:first-child, .new-ngu-faq > div:first-child, .onboarding-form-six { grid-template-columns: 1fr; }
-  .new-ngu-welcome, .new-ngu-pathway, .new-ngu-team, .new-ngu-induction, .new-ngu-essential-resources, .new-ngu-faq, .first-week-checklist { padding: 64px 22px; }
+  .new-ngu-welcome > div, .new-ngu-pathway, .team-member-admin, .new-ngu-team > div:first-child, .new-ngu-induction, .new-ngu-essential-resources > div:first-child, .new-ngu-faq > div:first-child, .onboarding-form-six { grid-template-columns: 1fr; }
+  .new-ngu-welcome, .new-ngu-pathway, .team-member-admin, .new-ngu-team, .new-ngu-induction, .new-ngu-essential-resources, .new-ngu-faq, .first-week-checklist { padding: 64px 22px; }
   .first-week-heading, .onboarding-role-heading { align-items: flex-start; flex-direction: column; }
   .first-week-grid, .new-ngu-team > div:last-child, .new-ngu-essential-resources > div:last-child, .onboarding-general-grid, .onboarding-role-grid { grid-template-columns: 1fr; }
   .new-ngu-pathway-preview article { grid-template-columns: auto 1fr; }
