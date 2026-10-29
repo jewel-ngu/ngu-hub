@@ -209,7 +209,7 @@ type Contact = readonly [title: string, subtitle: string, email: string | readon
 
 function TeamMemberAdministration(): ReactNode {
   return (
-    <section className="team-member-admin">
+    <section className="team-member-admin" id="team-member-administration">
       <div><p className="eyebrow">TEAM MEMBER ADMINISTRATION</p><h2>Manage team changes in one place.</h2><p>Use the appropriate form to begin the internal process for a new starter or an employee leaving NGU.</p></div>
       <div>
         <a href="https://flvihrc8zxz.typeform.com/to/LTS0KUMg" target="_blank" rel="noreferrer"><span>01</span><div><h3>Onboard a new team member</h3><p>Submit the details needed to prepare access, equipment and the employee&apos;s NGU setup.</p></div><ExternalLink size={22} /></a>
