@@ -66,6 +66,9 @@ export type CmsContent = {
     readonly welcomeText: string;
     readonly companyVideoUrl: string;
   };
+  readonly leaderboard: {
+    readonly resultsHeading: string;
+  };
   readonly pages: Readonly<Record<EditablePageKey, EditablePage>>;
   readonly award: {
     readonly name: string;
@@ -144,6 +147,9 @@ export const DEFAULT_CMS_CONTENT: CmsContent = {
     welcomeText: "NGU Real Estate is one of Queensland's fastest-growing independent real estate groups. Whether you're new to the team or a long-standing member, this Hub is your go-to for tools, resources, contacts, and company updates — everything you need in one place.",
     companyVideoUrl: "https://www.youtube.com/watch?v=mOGl90k7F1M",
   },
+  leaderboard: {
+    resultsHeading: "September results",
+  },
   pages: defaultPages,
   award: {
     name: "JASON YANG",
@@ -210,9 +216,10 @@ function isImageCard(value: unknown, request = false): boolean {
 }
 
 export function isCmsContent(value: unknown): value is CmsContent {
-  if (!isRecord(value) || value.schemaVersion !== 1 || !isRecord(value.announcement) || !isRecord(value.home) || !isRecord(value.pages) || !isRecord(value.award) || !isRecord(value.people) || !isRecord(value.infoHub) || !isRecord(value.training)) return false;
+  if (!isRecord(value) || value.schemaVersion !== 1 || !isRecord(value.announcement) || !isRecord(value.home) || !isRecord(value.leaderboard) || !isRecord(value.pages) || !isRecord(value.award) || !isRecord(value.people) || !isRecord(value.infoHub) || !isRecord(value.training)) return false;
   const announcement = value.announcement;
   const home = value.home;
+  const leaderboard = value.leaderboard;
   const award = value.award;
   const training = value.training;
   const people = value.people;
@@ -225,6 +232,7 @@ export function isCmsContent(value: unknown): value is CmsContent {
 
   return validPages && typeof announcement.enabled === "boolean" && isLimitedString(announcement.message, 160) && isLimitedString(announcement.linkLabel, 160) && isSafeLink(announcement.href)
     && isLimitedString(home.kicker, 100) && isLimitedString(home.welcomeHeading, 160) && isLimitedString(home.welcomeText, 2_000) && isSafeLink(home.companyVideoUrl)
+    && isLimitedString(leaderboard.resultsHeading, 160)
     && isLimitedString(award.name, 120) && isLimitedString(award.month, 80) && isLimitedString(award.heading, 160) && isLimitedString(award.category, 160) && isSafeLink(award.imageUrl) && isLimitedString(award.imagePosition, 40) && (award.imageScale === undefined || (typeof award.imageScale === "number" && Number.isFinite(award.imageScale) && award.imageScale >= 50 && award.imageScale <= 180))
     && (award.imageOffsetX === undefined || (typeof award.imageOffsetX === "number" && Number.isFinite(award.imageOffsetX) && award.imageOffsetX >= -100 && award.imageOffsetX <= 100))
     && (award.imageOffsetY === undefined || (typeof award.imageOffsetY === "number" && Number.isFinite(award.imageOffsetY) && award.imageOffsetY >= -100 && award.imageOffsetY <= 100))

@@ -56,7 +56,7 @@ export function SimpleContent({ page }: { readonly page: SimplePage }): ReactNod
 const liveLeaderboardUrl = "https://my.spinify.com/tv/3vhjv25pupscodft.3wojfa5k08lxc5op";
 const resultsLeaderboardUrl = "https://my.spinify.com/tv/3vhjv25pupscodft.3xgwvuisns364lxu";
 
-export function Leaderboard(): ReactNode {
+export function Leaderboard({ content }: { readonly content: CmsContent["leaderboard"] }): ReactNode {
   return (
     <div className="content-stack leaderboard-page">
       <section className="leaderboard-intro">
@@ -78,10 +78,10 @@ export function Leaderboard(): ReactNode {
       <section className="leaderboard-board leaderboard-results" aria-labelledby="results-leaderboard-heading">
         <div className="leaderboard-heading">
           <p className="eyebrow">MONTHLY RECOGNITION</p>
-          <h2 id="results-leaderboard-heading">September results</h2>
+          <h2 id="results-leaderboard-heading">{content.resultsHeading}</h2>
         </div>
         <div className="leaderboard-frame">
-          <iframe src={resultsLeaderboardUrl} title="NGU September results leaderboard" allowFullScreen />
+          <iframe src={resultsLeaderboardUrl} title={`NGU ${content.resultsHeading} leaderboard`} allowFullScreen />
         </div>
       </section>
 

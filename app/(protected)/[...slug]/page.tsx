@@ -57,7 +57,7 @@ export default async function RoutePage({ params }: RoutePageProps): Promise<Rea
   return (
     <>
       {slug !== "our-people" && <Hero title={title} subtitle={editablePage?.subtitle ?? page?.subtitle ?? special?.subtitle} image={editablePage?.imageUrl} imagePosition={editablePage?.imagePosition} />}
-      {slug === "trusted-network" ? <LiveDirectory kind="suppliers" /> : slug === "leaderboard" ? <Leaderboard /> : slug === "amlctf" ? <AmlCtf /> : slug === "new-to-ngu" ? <NewToNgu /> : slug === "real-estate-cpd" ? <RealEstateCpd /> : special ? <SpecialContent slug={slug} content={content} /> : page ? <SimpleContent page={page} /> : null}
+      {slug === "trusted-network" ? <LiveDirectory kind="suppliers" /> : slug === "leaderboard" ? <Leaderboard content={content.leaderboard} /> : slug === "amlctf" ? <AmlCtf /> : slug === "new-to-ngu" ? <NewToNgu /> : slug === "real-estate-cpd" ? <RealEstateCpd /> : special ? <SpecialContent slug={slug} content={content} /> : page ? <SimpleContent page={page} /> : null}
       <Footer />
     </>
   );

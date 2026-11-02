@@ -83,7 +83,8 @@ function migrateInfoHub(value: unknown): unknown {
 function migrateContent(value: unknown): unknown {
   if (!isRecord(value)) return value;
   const pages = isRecord(value.pages) ? { ...DEFAULT_CMS_CONTENT.pages, ...value.pages } : DEFAULT_CMS_CONTENT.pages;
-  return { ...value, pages, infoHub: migrateInfoHub(value.infoHub) };
+  const leaderboard = isRecord(value.leaderboard) ? { ...DEFAULT_CMS_CONTENT.leaderboard, ...value.leaderboard } : DEFAULT_CMS_CONTENT.leaderboard;
+  return { ...value, leaderboard, pages, infoHub: migrateInfoHub(value.infoHub) };
 }
 
 function parseContentValue(value: unknown): CmsContent | null {
