@@ -28,7 +28,6 @@ export const navItems: readonly NavItem[] = [
   { label: "Trusted Network", href: "/trusted-network" },
   { label: "Finance Services", href: "https://ngurealestate.com.au/finance-services", external: true },
   { label: "NGU Offices", href: "/ngu-offices" },
-  { label: "Principal Access 🔒", href: "https://sites.google.com/ngurealestate.com.au/ngupricipals", external: true },
 ];
 
 export const infoNavItems: readonly NavItem[] = [
