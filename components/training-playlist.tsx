@@ -13,7 +13,7 @@ export function TrainingPlaylist({ videos, label }: { readonly videos: readonly 
     <section className="training-playlist">
       <div className="playlist-player">
         <div className="playlist-frame">
-          {isDirectVideoUrl(selected.href) ? <video src={selected.href} title={selected.title} controls playsInline /> : <iframe src={getTrainingEmbedUrl(selected.href)} title={selected.title} allow="autoplay; fullscreen" allowFullScreen />}
+          {isDirectVideoUrl(selected.href) ? <video src={selected.href} poster={selected.thumbnailUrl || undefined} title={selected.title} controls playsInline /> : <iframe src={getTrainingEmbedUrl(selected.href)} title={selected.title} allow="autoplay; fullscreen" allowFullScreen />}
         </div>
         <div className="playlist-now-playing">
           <p className="eyebrow">NOW PLAYING · {label}</p>
@@ -25,7 +25,7 @@ export function TrainingPlaylist({ videos, label }: { readonly videos: readonly 
         <div className="playlist-list-heading"><p className="eyebrow">VIDEO LIBRARY</p><strong>{videos.length} sessions</strong></div>
         {videos.map((video, index) => (
           <button className={index === selectedIndex ? "active" : ""} onClick={() => setSelectedIndex(index)} type="button" key={`${video.title}-${video.date}`}>
-            <span><Play size={15} fill="currentColor" /></span>
+            {video.thumbnailUrl ? <span className="playlist-thumb"><img src={video.thumbnailUrl} alt="" /></span> : <span><Play size={15} fill="currentColor" /></span>}
             <span><strong>{video.title}</strong><small>{video.date}</small></span>
           </button>
         ))}

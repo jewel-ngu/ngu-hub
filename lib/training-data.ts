@@ -2,6 +2,7 @@ export type TrainingVideo = {
   readonly title: string;
   readonly date: string;
   readonly href: string;
+  readonly thumbnailUrl?: string;
 };
 
 export const salesTrainingVideos = [

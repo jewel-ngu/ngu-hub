@@ -204,7 +204,11 @@ function isSafeLink(value: unknown): value is string {
 }
 
 function isVideo(value: unknown): value is TrainingVideo {
-  return isRecord(value) && isLimitedString(value.title, 200) && isLimitedString(value.date, 80) && isSafeLink(value.href);
+  return isRecord(value)
+    && isLimitedString(value.title, 200)
+    && isLimitedString(value.date, 80)
+    && isSafeLink(value.href)
+    && (value.thumbnailUrl === undefined || value.thumbnailUrl === "" || isSafeLink(value.thumbnailUrl));
 }
 
 function isPerson(value: unknown): value is EditablePerson {
