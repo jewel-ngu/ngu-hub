@@ -73,7 +73,7 @@ function TrainingEditor({ title, videos, onChange }: { readonly title: string; r
 
   return (
     <section className="editor-card">
-      <div className="editor-card-heading"><div><p className="eyebrow">PLAYLIST</p><h2>{title}</h2></div><button type="button" onClick={() => { onChange([{ title: "New training video", date: new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" }), href: "https://" }, ...videos]); setExpanded(0); }}><Plus size={16} /> Add video</button></div>
+      <div className="editor-card-heading"><div><p className="eyebrow">PLAYLIST</p><h2>{title}</h2></div><button type="button" onClick={() => { onChange([{ title: "New training video", date: new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" }), href: "" }, ...videos]); setExpanded(0); }}><Plus size={16} /> Add video</button></div>
       <div className="editor-video-list">
         {videos.map((video, index) => (
           <article key={`${video.title}-${index}`}>

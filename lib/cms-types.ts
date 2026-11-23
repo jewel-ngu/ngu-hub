@@ -211,6 +211,29 @@ function isVideo(value: unknown): value is TrainingVideo {
     && (value.thumbnailUrl === undefined || value.thumbnailUrl === "" || isSafeLink(value.thumbnailUrl));
 }
 
+function getTrainingValidationError(value: unknown): string | null {
+  if (!isRecord(value)) return null;
+  const playlists = [
+    ["Sales training", value.sales],
+    ["Rex training", value.rex],
+  ] as const;
+
+  for (const [playlistName, playlist] of playlists) {
+    if (!Array.isArray(playlist)) continue;
+    for (const [index, video] of playlist.entries()) {
+      if (!isRecord(video)) continue;
+      const videoName = typeof video.title === "string" && video.title.trim() ? ` “${video.title.trim()}”` : "";
+      if (!isSafeLink(video.href)) {
+        return `${playlistName} video ${index + 1}${videoName} needs a complete video URL. Paste an http:// or https:// link, or upload the video again.`;
+      }
+      if (video.thumbnailUrl !== undefined && video.thumbnailUrl !== "" && !isSafeLink(video.thumbnailUrl)) {
+        return `${playlistName} video ${index + 1}${videoName} has an invalid thumbnail URL. Upload the thumbnail again or clear the field.`;
+      }
+    }
+  }
+  return null;
+}
+
 function isPerson(value: unknown): value is EditablePerson {
   return isRecord(value) && isLimitedString(value.id, 120) && isLimitedString(value.name, 160) && isLimitedString(value.role, 240) && isSafeLink(value.imageUrl) && isLimitedString(value.imagePosition, 40);
 }
@@ -249,4 +272,18 @@ export function isCmsContent(value: unknown): value is CmsContent {
     && Array.isArray(infoHub.requests) && infoHub.requests.length <= 50 && infoHub.requests.every((card) => isImageCard(card, true))
     && Array.isArray(training.sales) && training.sales.length <= 500 && training.sales.every(isVideo)
     && Array.isArray(training.rex) && training.rex.length <= 500 && training.rex.every(isVideo);
+}
+
+export type CmsContentValidation =
+  | { readonly ok: true; readonly content: CmsContent }
+  | { readonly ok: false; readonly error: string };
+
+export function validateCmsContent(value: unknown): CmsContentValidation {
+  if (isRecord(value) && isRecord(value.training)) {
+    const trainingError = getTrainingValidationError(value.training);
+    if (trainingError) return { ok: false, error: trainingError };
+  }
+  return isCmsContent(value)
+    ? { ok: true, content: value }
+    : { ok: false, error: "The draft contains invalid or unsafe content." };
 }

@@ -32,7 +32,6 @@ export async function POST(request: Request): Promise<Response> {
           tokenPayload: JSON.stringify({ editor: editor.email }),
         };
       },
-      onUploadCompleted: async () => undefined,
     });
     return Response.json(result);
   } catch (error) {

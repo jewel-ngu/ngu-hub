@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { getEditorIdentity } from "@/lib/editor-access";
-import { isCmsContent } from "@/lib/cms-types";
+import { validateCmsContent } from "@/lib/cms-types";
 import { getCmsState, saveDraft } from "@/lib/cms-store";
 
 export const runtime = "nodejs";
@@ -21,9 +21,10 @@ export async function PUT(request: Request): Promise<Response> {
   } catch {
     return Response.json({ error: "The draft is not valid JSON." }, { status: 400 });
   }
-  if (!isCmsContent(body)) return Response.json({ error: "The draft contains invalid or unsafe content." }, { status: 400 });
+  const validation = validateCmsContent(body);
+  if (!validation.ok) return Response.json({ error: validation.error }, { status: 400 });
 
-  await saveDraft(body, editor.email);
+  await saveDraft(validation.content, editor.email);
   revalidatePath("/editor");
   return Response.json({ ok: true, savedAt: new Date().toISOString() });
 }
